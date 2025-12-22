@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Star’s Nocturne Café</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#160b24;
+  --panel:#2a163d;
+  --gold:#d8b46a;
+  --lav:#cbb7ff;
+  --text:#eee6ff;
+  --alert:#ffdf9a;
+}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at top,#2b1742,var(--bg));
+  color:var(--text);
+  font-family:Georgia,serif;
+}
+
+/* OVERLAYS */
+.overlay{
+  position:fixed; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.88);
+  z-index:50;
+}
+.box{
+  background:rgba(42,22,61,.97);
+  border:1px solid var(--gold);
+  border-radius:22px;
+  padding:28px;
+  max-width:520px;
+  text-align:left;
+}
+.box h2{text-align:center;color:var(--gold)}
+
+/* BUTTONS */
+button{
+  margin-top:10px;
+  padding:10px;
+  width:100%;
+  border-radius:14px;
+  border:1px solid var(--lav);
+  background:transparent;
+  color:var(--lav);
+  cursor:pointer;
+}
+button.active{
+  background:var(--lav);
+  color:#1b1026;
+  box-shadow:0 0 12px rgba(203,183,255,.7);
+}
+button:hover{background:var(--lav);color:#1b1026}
+
+/* GAME GRID */
+#game{
+  display:none;
+  padding:24px;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:20px;
+}
+
+/* PANELS */
+.panel{
+  background:rgba(42,22,61,.92);
+  border:1px solid var(--gold);
+  border-radius:20px;
+  padding:18px;
+}
+.panel h3{text-align:center;color:var(--gold);letter-spacing:3px}
+
+/* ORDER ALERT */
+.alert{
+  animation:glow 1s ease-in-out infinite alternate;
+}
+@keyframes glow{
+  from{box-shadow:0 0 8px rgba(255,223,154,.4)}
+  to{box-shadow:0 0 18px rgba(255,223,154,.9)}
+}
+
+/* MENU */
+.menu-item{
+  padding:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.06);
+  margin-bottom:8px;
+  cursor:pointer;
+}
+.menu-item:hover{background:rgba(203,183,255,.15)}
+
+/* CUP */
+.cup-wrap{position:relative;width:220px;height:220px;margin:auto}
+.cup{
+  position:absolute; inset:20px;
+  border-radius:50%;
+  border:2px solid var(--gold);
+  overflow:hidden;
+}
+.steam{
+  position:absolute;top:-25px;left:50%;
+  width:6px;height:40px;
+  background:rgba(255,255,255,.6);
+  animation:rise 2s infinite;
+}
+@keyframes rise{
+  0%{opacity:0;transform:translateY(0)}
+  50%{opacity:1}
+  100%{opacity:0;transform:translateY(-30px)}
+}
+
+/* SWIRLS */
+.swirl{
+  position:absolute; inset:-25%;
+  border-radius:50%;
+  animation:spin 10s linear infinite;
+  mix-blend-mode:screen;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.base.lavender{background:conic-gradient(#b58aff,#6b3fa0,#b58aff)}
+.base.coffee{background:conic-gradient(#6f4a2d,#3d2412,#6f4a2d)}
+.milk{background:conic-gradient(#fff,#e7dcc7,#fff)}
+.honey{background:conic-gradient(#ffcc66,#c9952f,#ffcc66)}
+
+/* SPOON */
+.spoon{
+  position:absolute;
+  width:10px;height:120px;
+  left:50%;top:12px;
+  transform-origin:bottom center;
+  background:linear-gradient(to right,#ffdca8,#cfa86a,#ffdca8);
+  border-radius:8px;
+  filter:blur(.6px);
+  display:none;
+}
+@keyframes stir{
+  0%{transform:rotate(-10deg)}
+  50%{transform:rotate(10deg)}
+  100%{transform:rotate(0)}
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO / APPRENTICE -->
+<div id="intro" class="overlay">
+  <div class="box">
+    <h2>✦ STAR ✦</h2>
+    <p>
+      Welcome, apprentice.<br><br>
+      In this café, you will:
+      <br>• Steep lavender herbs with patience
+      <br>• Grind coffee beans with care
+      <br>• Choose whether a drink is served hot or cold
+      <br>• Stir with intention
+      <br>• Serve when the cup is ready
+    </p>
+    <button onclick="begin()">I am ready</button>
+  </div>
+</div>
+
+<!-- COMPLETION -->
+<div id="complete" class="overlay" style="display:none">
+  <div class="box">
+    <h2>✦ Apprenticeship Complete ✦</h2>
+    <p id="praise"></p>
+    <button onclick="window.location.href='milos-garden.html'">
+      Enter Milo’s Garden 🌿
+    </button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="panel">
+    <h3>MENU</h3>
+    <div class="menu-item" onclick="addBase('Lavender Tea')">Lavender Tea</div>
+    <div class="menu-item" onclick="addBase('Café Latte')">Café Latte</div>
+    <hr>
+    <div class="menu-item" onclick="addInfusion('milk')">Milk</div>
+    <div class="menu-item" onclick="addInfusion('honey')">Honey</div>
+    <hr>
+    <button id="hotBtn" onclick="setTemp('hot')">Serve Hot</button>
+    <button id="coldBtn" onclick="setTemp('cold')">Serve Cold</button>
+  </div>
+
+  <div class="panel">
+    <h3>Your Cup</h3>
+    <div class="cup-wrap">
+      <div class="spoon" id="spoon"></div>
+      <div class="cup" id="cup"><div class="steam"></div></div>
+    </div>
+    <button id="stirBtn" onclick="stir()">Stir</button>
+    <button id="serveBtn" onclick="serve()">Serve</button>
+  </div>
+
+  <div class="panel" id="orderPanel">
+    <h3>Customer</h3>
+    <p id="order"></p>
+    <p id="reaction"></p>
+  </div>
+</div>
+
+<script>
+let served=0;
+let recipe={base:null,infusions:[],temp:null};
+let ready=false;
+let currentOrder={};
+
+const cup=document.getElementById("cup");
+const spoon=document.getElementById("spoon");
+const orderEl=document.getElementById("order");
+const reaction=document.getElementById("reaction");
+const orderPanel=document.getElementById("orderPanel");
+
+function begin(){
+  intro.style.display="none";
+  game.style.display="grid";
+  nextCustomer();
+}
+
+function nextCustomer(){
+  recipe={base:null,infusions:[],temp:null};
+  ready=false;
+  cup.innerHTML='<div class="steam"></div>';
+  spoon.style.display="none";
+  reaction.textContent="";
+  document.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+
+  const bases=["Lavender Tea","Café Latte"];
+  currentOrder.base=bases[Math.floor(Math.random()*bases.length)];
+  currentOrder.temp=Math.random()>.5?"hot":"cold";
+
+  orderEl.textContent=`Order: ${currentOrder.base} (${currentOrder.temp})`;
+
+  orderPanel.classList.add("alert");
+  setTimeout(()=>orderPanel.classList.remove("alert"),5000);
+}
+
+function addBase(b){
+  recipe.base=b;
+  const swirl=document.createElement("div");
+  swirl.className="swirl base "+(b==="Lavender Tea"?"lavender":"coffee");
+  cup.appendChild(swirl);
+}
+
+function addInfusion(i){
+  recipe.infusions.push(i);
+  const swirl=document.createElement("div");
+  swirl.className="swirl "+i;
+  cup.appendChild(swirl);
+}
+
+function setTemp(t){
+  recipe.temp=t;
+  document.getElementById("hotBtn").classList.toggle("active",t==="hot");
+  document.getElementById("coldBtn").classList.toggle("active",t==="cold");
+}
+
+function stir(){
+  if(!recipe.base||!recipe.temp) {
+    reaction.textContent="STAR: Prepare the drink fully before stirring.";
+    return;
+  }
+  spoon.style.display="block";
+  spoon.style.animation="stir 1s ease-in-out 3";
+  document.getElementById("stirBtn").classList.add("active");
+  setTimeout(()=>ready=true,3000);
+}
+
+function serve(){
+  if(!ready){
+    reaction.textContent="STAR: The cup is not ready.";
+    return;
+  }
+  if(recipe.base!==currentOrder.base||recipe.temp!==currentOrder.temp){
+    reaction.textContent="STAR: This is not what they asked for.";
+    return;
+  }
+
+  served++;
+  reaction.textContent="Customer: Perfect. Thank you.";
+
+  if(served>=3){
+    setTimeout(()=>{
+      game.style.display="none";
+      praise.innerHTML=
+        "Three customers served.<br> Your hands are steady now.<br> Milo awaits you.";
+      complete.style.display="flex";
+    },1500);
+  }else{
+    setTimeout(nextCustomer,1800);
+  }
+}
+</script>
+
+</body>
+</html>
