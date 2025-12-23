@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Milo’s Garden</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#0f1a14;
+  --panel:#1c2e23;
+  --leaf:#9ad29a;
+  --gold:#d8b46a;
+  --text:#e9f6ee;
+}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at top,#1f3a2a,var(--bg));
+  color:var(--text);
+  font-family:Georgia,serif;
+  overflow-x:hidden;
+}
+
+/* ---------- LAYOUT ---------- */
+#garden{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:22px;
+  padding:24px;
+  min-height:100vh;
+}
+
+.panel{
+  background:rgba(28,46,35,.92);
+  border:1px solid var(--gold);
+  border-radius:20px;
+  padding:18px;
+}
+.panel h3{
+  text-align:center;
+  color:var(--gold);
+  letter-spacing:3px;
+}
+
+/* ---------- MILO ---------- */
+#miloBox{
+  display:flex;
+  gap:14px;
+}
+#miloImg{
+  width:120px;
+  border-radius:14px;
+}
+#miloText{
+  font-size:.95rem;
+  line-height:1.4;
+}
+
+/* ---------- SEEDS ---------- */
+.seed{
+  padding:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.06);
+  margin-bottom:8px;
+  cursor:pointer;
+}
+.seed:hover{background:rgba(154,210,154,.25)}
+
+/* ---------- PLOT ---------- */
+.plotWrap{
+  display:flex;
+  justify-content:center;
+}
+.plot{
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:radial-gradient(circle,#3b2a1a,#1d130a);
+  border:2px solid var(--gold);
+  position:relative;
+  overflow:hidden;
+}
+.plot.dug{background:radial-gradient(circle,#5b4028,#2a1a10)}
+.plot.planted::after{
+  content:"🌱";
+  position:absolute;
+  font-size:36px;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+}
+.plot.grown::after{
+  content:"🌿";
+  font-size:42px;
+}
+
+/* ---------- TOOLS ---------- */
+.tool{
+  padding:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.06);
+  margin-bottom:8px;
+  cursor:pointer;
+  text-align:center;
+}
+.tool:hover{background:rgba(154,210,154,.25)}
+
+/* ---------- FIREFLIES ---------- */
+.firefly{
+  position:fixed;
+  width:6px;
+  height:6px;
+  background:rgba(154,210,154,.8);
+  border-radius:50%;
+  animation:float 12s linear infinite;
+}
+@keyframes float{
+  from{transform:translateY(0)}
+  to{transform:translateY(-120vh)}
+}
+
+/* ---------- CODEX ---------- */
+#codex{
+  position:fixed;
+  bottom:-320px;
+  left:50%;
+  transform:translateX(-50%);
+  width:420px;
+  background:rgba(28,46,35,.97);
+  border:1px solid var(--gold);
+  border-radius:20px 20px 0 0;
+  padding:18px;
+  transition:.6s;
+}
+#codex.open{bottom:0}
+
+@media(max-width:768px){
+  #garden{grid-template-columns:1fr}
+  #codex{width:95%}
+}
+</style>
+</head>
+
+<body>
+
+<div id="garden">
+  <!-- MILO -->
+  <div class="panel">
+    <h3>MILO</h3>
+    <div id="miloBox">
+      <img id="miloImg" src="milo.png">
+      <div id="miloText"></div>
+    </div>
+  </div>
+
+  <!-- PLOT -->
+  <div class="panel">
+    <h3>Garden Plot</h3>
+    <div class="plotWrap">
+      <div id="plot" class="plot"></div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="panel">
+    <h3>Seeds & Tools</h3>
+
+    <div class="seed" onclick="selectSeed('Lavender')">Lavender</div>
+    <div class="seed" onclick="selectSeed('Chamomile')">Chamomile</div>
+    <div class="seed" onclick="selectSeed('Camellia sinensis')">Tea Plant</div>
+    <div class="seed" onclick="selectSeed('Coffee Bean')">Coffee Bean</div>
+
+    <hr>
+
+    <div class="tool" onclick="dig()">🥄 Dig</div>
+    <div class="tool" onclick="plant()">🌱 Plant</div>
+    <div class="tool" onclick="water()">💧 Water</div>
+  </div>
+</div>
+
+<!-- CODEX -->
+<div id="codex">
+  <div onclick="toggleCodex()" style="cursor:pointer;color:var(--leaf)">
+    ✦ Close Garden Codex ✦
+  </div>
+  <h3>Garden Codex</h3>
+  <div id="codexList"></div>
+</div>
+
+<script>
+/* ---------- STATE ---------- */
+const name = localStorage.playerName || "Apprentice";
+let seed=null, stage=0;
+let codex=[];
+
+/* ---------- MILO TEXT ---------- */
+const miloLines=[
+  `Welcome, ${name}.`,
+  "The soil has been waiting.",
+  "Choose a seed. Care follows choice."
+];
+let line=0;
+const miloText=document.getElementById("miloText");
+function nextLine(){
+  miloText.textContent=miloLines[line++]||"";
+}
+nextLine(); setTimeout(nextLine,2000); setTimeout(nextLine,4000);
+
+/* ---------- ACTIONS ---------- */
+function selectSeed(s){
+  seed=s;
+  miloText.textContent=`${s}. A good beginning.`;
+}
+
+function dig(){
+  if(!seed)return miloText.textContent="Milo: Decide what you wish to grow.";
+  plot.classList.add("dug");
+  stage=1;
+}
+
+function plant(){
+  if(stage!==1)return miloText.textContent="Milo: The earth must be opened first.";
+  plot.classList.add("planted");
+  stage=2;
+}
+
+function water(){
+  if(stage!==2)return miloText.textContent="Milo: Not yet.";
+  plot.classList.add("grown");
+  miloText.textContent="Good. Now we wait.";
+  unlock();
+}
+
+/* ---------- UNLOCK ---------- */
+function unlock(){
+  codex.push(seed);
+  localStorage.unlockedSeeds = JSON.stringify(codex);
+  codexList.innerHTML += `<div>🌿 ${seed} planted</div>`;
+  codex.classList.add("open");
+
+  setTimeout(resetPlot,2000);
+}
+
+function resetPlot(){
+  plot.className="plot";
+  seed=null; stage=0;
+}
+
+/* ---------- CODEX ---------- */
+function toggleCodex(){
+  codex.classList.toggle("open");
+}
+
+/* ---------- FIREFLIES ---------- */
+for(let i=0;i<12;i++){
+  const f=document.createElement("div");
+  f.className="firefly";
+  f.style.left=Math.random()*100+"vw";
+  f.style.animationDelay=Math.random()*12+"s";
+  document.body.appendChild(f);
+}
+</script>
+
+</body>
+</html>
