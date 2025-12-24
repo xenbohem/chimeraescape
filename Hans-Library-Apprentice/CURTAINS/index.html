@@ -1,1 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hans — The Edwardian Library</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+:root {
+  --bg: #0b0814;
+  --panel: #120a1f;
+  --violet: #a88bff;
+  --lavender: #e6d9ff;
+  --iron: #3b2f4a;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #1a1030, var(--bg));
+  color: var(--lavender);
+  font-family: "Garamond", serif;
+  overflow: hidden;
+}
+
+/* ================= CURTAINS ================= */
+#curtains {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  z-index: 20;
+  transition: opacity 1s ease;
+}
+.curtain {
+  width: 50%;
+  background: linear-gradient(#2b103a, #14081f);
+  transition: transform 2s ease;
+}
+#curtain-left { transform-origin: left; }
+#curtain-right { transform-origin: right; }
+
+/* ================= BALCONY ================= */
+#balcony {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 140px;
+  background: linear-gradient(#14081f, #0b0814);
+  border-bottom: 4px solid var(--iron);
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  z-index: 5;
+}
+
+#hans-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px solid var(--violet);
+  background: url("https://dummyimage.com/180x180/3b2f4a/e6d9ff&text=Hans") center/cover;
+  margin-right: 20px;
+}
+
+#hans-dialogue {
+  font-style: italic;
+  max-width: 70%;
+  line-height: 1.4;
+}
+
+/* ================= DIVIDER ================= */
+#divider {
+  position: absolute;
+  top: 140px;
+  width: 100%;
+  height: 18px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--iron) 0px,
+      var(--iron) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+  z-index: 4;
+}
+
+/* ================= STAGE ================= */
+#stage {
+  position: absolute;
+  top: 160px;
+  bottom: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 260px;
+  gap: 20px;
+  padding: 20px;
+  z-index: 1;
+}
+
+/* ================= LIBRARY ================= */
+.shelf-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.shelf {
+  border: 2px solid var(--iron);
+  padding: 8px;
+  background: rgba(30, 18, 50, 0.6);
+  position: relative;
+}
+
+.shelf::before,
+.shelf::after {
+  content: "❦";
+  position: absolute;
+  color: var(--violet);
+}
+.shelf::before { top: -10px; left: -10px; }
+.shelf::after { bottom: -10px; right: -10px; }
+
+.shelf-title {
+  font-size: 14px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ================= HANS PANEL ================= */
+#hans-panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(20,10,40,0.9), rgba(10,5,20,0.95));
+  border-left: 2px solid var(--iron);
+  box-shadow: inset 0 0 40px rgba(168,139,255,0.2);
+}
+
+#magnified-hans {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+/* ================= CONTROLS ================= */
+#controls {
+  position: absolute;
+  bottom: 16px;
+  left: 10px;
+  right: 10px;
+  background: rgba(20,10,40,0.7);
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+button {
+  background: rgba(30,15,50,0.8);
+  border: 1px solid rgba(200,170,255,0.5);
+  color: var(--lavender);
+  font-family: "Garamond", serif;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  box-shadow: 0 0 10px rgba(168,139,255,0.6);
+}
+</style>
+</head>
+
+<body>
+
+<!-- CURTAINS -->
+<div id="curtains">
+  <div class="curtain" id="curtain-left"></div>
+  <div class="curtain" id="curtain-right"></div>
+</div>
+
+<!-- BALCONY -->
+<div id="balcony">
+  <div id="hans-avatar"></div>
+  <div id="hans-dialogue">…</div>
+</div>
+
+<div id="divider"></div>
+
+<!-- STAGE -->
+<div id="stage">
+
+  <div class="shelf-column">
+    <div class="shelf">
+      <div class="shelf-title">Shakespeare — Tragedies</div>
+    </div>
+    <div class="shelf">
+      <div class="shelf-title">Gothic Fiction</div>
+    </div>
+  </div>
+
+  <div class="shelf-column">
+    <div class="shelf">
+      <div class="shelf-title">Poetry</div>
+    </div>
+  </div>
+
+  <!-- HANS PANEL -->
+  <div id="hans-panel">
+    <video id="magnified-hans" autoplay muted playsinline>
+      <source src="hans-pippet.mp4" type="video/mp4">
+    </video>
+
+    <div id="controls">
+      <button id="mute-btn">🔇</button>
+      <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.6">
+      <button id="replay-hans">▶ Replay</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================= CURTAIN LOGIC ================= */
+const curtainLeft = document.getElementById("curtain-left");
+const curtainRight = document.getElementById("curtain-right");
+const curtains = document.getElementById("curtains");
+
+setTimeout(() => {
+  curtainLeft.style.transform = "translateX(-100%)";
+  curtainRight.style.transform = "translateX(100%)";
+}, 600);
+
+setTimeout(() => {
+  curtains.style.opacity = "0";
+  curtains.style.pointerEvents = "none";
+  curtains.style.zIndex = "0";
+}, 2600);
+
+/* ================= HANS MEMORY ================= */
+const memory = JSON.parse(localStorage.getItem("hansMemory") || "{}");
+memory.visits = (memory.visits || 0) + 1;
+localStorage.setItem("hansMemory", JSON.stringify(memory));
+
+const dialogueBox = document.getElementById("hans-dialogue");
+
+function speak(text) {
+  dialogueBox.textContent = text;
+}
+
+/* Opening dialogue */
+if (memory.visits === 1) {
+  speak("Ah. A newcomer. Do stand still — the shelves dislike sudden optimism.");
+} else {
+  speak("You return. Either confidence… or a remarkable tolerance for disappointment.");
+}
+
+/* ================= AUDIO ================= */
+const hansVideo = document.getElementById("magnified-hans");
+const slider = document.getElementById("volume-slider");
+const muteBtn = document.getElementById("mute-btn");
+const replayBtn = document.getElementById("replay-hans");
+
+let hasSpoken = false;
+
+document.addEventListener("click", () => {
+  if (!hasSpoken) {
+    hansVideo.muted = false;
+    hansVideo.volume = slider.value;
+    hansVideo.currentTime = 0;
+    hansVideo.play();
+    hasSpoken = true;
+  }
+}, { once: true });
+
+replayBtn.onclick = () => {
+  hansVideo.muted = false;
+  hansVideo.currentTime = 0;
+  hansVideo.play();
+  speak("Yes, yes. I am repeating myself. This is for *your* benefit.");
+};
+
+slider.oninput = () => {
+  hansVideo.volume = slider.value;
+  hansVideo.muted = slider.value == 0;
+  muteBtn.textContent = hansVideo.muted ? "🔇" : "🔊";
+};
+
+muteBtn.onclick = () => {
+  hansVideo.muted = !hansVideo.muted;
+  muteBtn.textContent = hansVideo.muted ? "🔇" : "🔊";
+};
+</script>
+
+</body>
+</html>
