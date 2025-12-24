@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hans’ Library — Full Theatrical Version</title>
+<style>
+body {
+    margin: 0;
+    font-family: Georgia, serif;
+    background: radial-gradient(circle at top, #140b22, #050308);
+    color: #e6d9ff;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* BALCONY CHAT */
+#balcony {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #2a1744, #140b22);
+    border-bottom: 2px solid rgba(200,170,255,0.4);
+    position: relative;
+    z-index: 5;
+}
+
+#hans {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+#avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-image: url('hans-avatar.jpg');
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 0 20px rgba(160,120,255,0.7);
+}
+
+#dialogue {
+    max-width: 520px;
+    font-style: italic;
+}
+
+/* MAGNIFIED JUDGING HANS VIDEO */
+#magnified-hans {
+    position: absolute;
+    right: 0;
+    top: 160px;
+    width: 180px;
+    height: 70%;
+    opacity: 0.85;
+    z-index: 1;
+    transition: transform 0.5s ease;
+    object-fit: cover;
+}
+
+/* CURTAINS */
+.curtain {
+    position: absolute;
+    top: 160px;
+    width: 50%;
+    height: calc(100vh - 160px);
+    background: linear-gradient(to bottom, #3b1a63, #1a0b2d);
+    z-index: 10;
+    transition: transform 1.5s ease;
+}
+
+#left-curtain {
+    left: 0;
+}
+
+#right-curtain {
+    right: 0;
+}
+
+/* STAGE */
+#stage {
+    display: flex;
+    height: calc(100vh - 160px);
+    position: relative;
+    z-index: 2;
+}
+
+/* SCROLLABLE COLUMNS */
+.column {
+    width: 40%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    position: relative;
+    z-index: 2;
+}
+
+.column::-webkit-scrollbar {
+    width: 6px;
+}
+.column::-webkit-scrollbar-thumb {
+    background: rgba(200,170,255,0.4);
+    border-radius: 10px;
+}
+
+/* SHELVES */
+.shelf {
+    border: 2px solid rgba(200,170,255,0.4);
+    border-radius: 10px;
+    padding: 10px;
+    background: linear-gradient(180deg, #2a1744, #1a102b);
+    min-height: 140px;
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+}
+
+.shelf h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: #cbb7ff;
+}
+
+/* PLACEHOLDER */
+.placeholder {
+    width: 40px;
+    height: 80px;
+    margin: 4px;
+    border: 2px dashed rgba(200,170,255,0.4);
+    border-radius: 4px;
+    display: inline-block;
+    vertical-align: bottom;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+/* BOOKS */
+.book {
+    width: 40px;
+    height: 80px;
+    border-radius: 4px;
+    cursor: grab;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 5;
+    position: relative;
+}
+
+.book:hover {
+    transform: translateY(-6px) scale(1.05);
+    box-shadow: 0 0 12px rgba(200,170,255,0.6);
+}
+
+/* TOOLTIP */
+.book-title-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(130,80,255,0.9);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 50;
+}
+
+.book:hover .book-title-tooltip {
+    opacity: 1;
+}
+
+/* CARRIER */
+#carrier {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 340px;
+    height: 120px;
+    padding: 10px;
+    background: url('cart.jpg') no-repeat center/cover;
+    border: 2px solid rgba(200,170,255,0.6);
+    border-radius: 10px;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 2;
+    cursor: grab;
+}
+</style>
+</head>
+<body>
+
+<!-- BALCONY CHAT -->
+<div id="balcony">
+    <div id="hans">
+        <div id="avatar"></div>
+        <div id="dialogue">Hans: “...”</div>
+    </div>
+</div>
+
+<!-- MAGNIFIED VIDEO HANS -->
+<video id="magnified-hans" autoplay loop muted playsinline>
+    <source src="hans-pippet.mp4" type="video/mp4">
+</video>
+
+<!-- CURTAINS -->
+<div id="left-curtain" class="curtain"></div>
+<div id="right-curtain" class="curtain"></div>
+
+<!-- STAGE -->
+<div id="stage">
+    <!-- LEFT COLUMN -->
+    <div class="column">
+        <div class="shelf" data-cat="shakespeare">
+            <h4>Shakespeare — Tragedies</h4>
+            <div class="book" style="background-image: url('hamlet.jpg')">
+                <span class="book-title-tooltip">Hamlet</span>
+            </div>
+            <div class="book" style="background-image: url('macbeth.jpg')">
+                <span class="book-title-tooltip">Macbeth</span>
+            </div>
+            <div class="placeholder"></div>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="column">
+        <div class="shelf" data-cat="fiction">
+            <h4>Classic Fiction</h4>
+            <div class="book" style="background-image: url('paradise-lost.jpg')">
+                <span class="book-title-tooltip">Paradise Lost</span>
+            </div>
+            <div class="placeholder"></div>
+        </div>
+    </div>
+</div>
+
+<!-- CARRIER -->
+<div id="carrier"></div>
+
+<script>
+const dialogue = document.getElementById("dialogue");
+const carrier = document.getElementById("carrier");
+const magnifiedHans = document.getElementById("magnified-hans");
+const leftCurtain = document.getElementById("left-curtain");
+const rightCurtain = document.getElementById("right-curtain");
+
+/* Hans Personality Memory */
+let hansMemory = {
+    successes: [],
+    mistakes: [],
+    personalityLines: [
+        "Honestly, even a child could have done better.",
+        "One expects a bit more finesse, dear reader.",
+        "Do try to keep up, it’s not complicated.",
+        "Ah, at last! Some competence shines through."
+    ]
+};
+
+function hansComment(success) {
+    if(success) {
+        dialogue.textContent = `Hans: "${hansMemory.personalityLines[3]}"`;
+    } else {
+        const idx = Math.floor(Math.random()*3);
+        dialogue.textContent = `Hans: "${hansMemory.personalityLines[idx]}"`;
+    }
+    magnifiedHans.style.transform = "scale(1.05) translateX(-5px)";
+    setTimeout(()=>{ magnifiedHans.style.transform = "scale(1) translateX(0)"; }, 500);
+}
+
+/* BOOK DATA */
+const books = [
+    { title: "Othello", cat: "shakespeare", image: "othello.jpg" },
+    { title: "Frankenstein", cat: "fiction", image: "frankenstein.jpg" }
+];
+
+/* ADD BOOKS TO CARRIER */
+function addBookToCarrier(book) {
+    const div = document.createElement("div");
+    div.className = "book";
+    div.draggable = true;
+    div.dataset.cat = book.cat;
+    div.dataset.title = book.title;
+    div.style.backgroundImage = `url('${book.image}')`;
+
+    const tooltip = document.createElement("span");
+    tooltip.className = "book-title-tooltip";
+    tooltip.textContent = book.title;
+    div.appendChild(tooltip);
+
+    div.addEventListener("dragstart", e => {
+        e.dataTransfer.setData("cat", book.cat);
+        e.dataTransfer.setData("title", book.title);
+        div.dataset.dragging = "true";
+        div.style.transition = "transform 0.4s ease";
+        div.style.zIndex = 20;
+    });
+
+    carrier.appendChild(div);
+}
+
+books.forEach(addBookToCarrier);
+
+/* DROP LOGIC */
+document.querySelectorAll(".shelf").forEach(shelf => {
+    shelf.addEventListener("dragover", e => e.preventDefault());
+    shelf.addEventListener("drop", e => {
+        const cat = e.dataTransfer.getData("cat");
+        const title = e.dataTransfer.getData("title");
+        const dragging = [...carrier.children].find(b => b.dataset.dragging);
+        if(!dragging) return;
+        dragging.removeAttribute("data-dragging");
+
+        if(shelf.dataset.cat === cat) {
+            hansMemory.successes.push(title);
+            hansComment(true);
+
+            const rectShelf = shelf.getBoundingClientRect();
+            const rectBook = dragging.getBoundingClientRect();
+
+            document.body.appendChild(dragging);
+            dragging.style.position = "absolute";
+            dragging.style.top = `${rectBook.top}px`;
+            dragging.style.left = `${rectBook.left}px`;
+            dragging.style.zIndex = 25;
+
+            const dx = rectShelf.left + 10 - rectBook.left;
+            const dy = rectShelf.top + 10 - rectBook.top;
+
+            requestAnimationFrame(() => {
+                dragging.style.transition = "transform 0.5s ease";
+                dragging.style.transform = `translate(${dx}px, ${dy}px)`;
+            });
+
+            setTimeout(() => {
+                dragging.style.position = "relative";
+                dragging.style.transform = "none";
+                dragging.style.zIndex = 10;
+                shelf.appendChild(dragging);
+            }, 550);
+
+        } else {
+            hansMemory.mistakes.push(title);
+            hansComment(false);
+            carrier.appendChild(dragging);
+            setTimeout(()=>throwBook(title, dragging.style.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/,'$1')), 800);
+        }
+    });
+});
+
+/* DRAGGABLE CARRIER */
+let offsetX, offsetY, isDragging = false;
+carrier.addEventListener('mousedown', e => {
+    isDragging = true;
+    const rect = carrier.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    carrier.style.transition = "none";
+});
+document.addEventListener('mousemove', e => {
+    if(!isDragging) return;
+    carrier.style.left = `${e.clientX - offsetX}px`;
+    carrier.style.top = `${e.clientY - offsetY}px`;
+});
+document.addEventListener('mouseup', e => {
+    isDragging = false;
+});
+
+/* Hans Throws Book */
+function throwBook(title, image) {
+    const thrownBook = document.createElement("div");
+    thrownBook.className = "book";
+    thrownBook.style.backgroundImage = `url('${image}')`;
+    thrownBook.style.position = "absolute";
+    const avatarRect = document.getElementById("avatar").getBoundingClientRect();
+    thrownBook.style.top = `${avatarRect.bottom}px`;
+    thrownBook.style.left = `${avatarRect.left}px`;
+    thrownBook.style.zIndex = 30;
+    thrownBook.style.transition = "all 1s ease-in-out";
+    document.body.appendChild(thrownBook);
+
+    const carrierRect = carrier.getBoundingClientRect();
+    setTimeout(()=>{
+        thrownBook.style.top = `${carrierRect.top + 10}px`;
+        thrownBook.style.left = `${carrierRect.left + 50}px`;
+    },50);
+
+    setTimeout(()=>{
+        thrownBook.style.position = "static";
+        thrownBook.style.transition = "none";
+        carrier.appendChild(thrownBook);
+    },1050);
+}
+
+/* CURTAIN ANIMATION AND FIRST DIALOGUE */
+window.onload = () => {
+    leftCurtain.style.transform = "translateX(-100%)";
+    rightCurtain.style.transform = "translateX(100%)";
+    setTimeout(() => {
+        dialogue.textContent = `Hans: "Ah, you’ve arrived at last… I do hope you’re capable of distinguishing tragedy from farce, lest I despair entirely."`;
+    }, 1200);
+};
+</script>
+
+</body>
+</html>
