@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chimera Cat Cafe</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- NAME PROMPT -->
+<div id="namePrompt" class="name-prompt hidden">
+  <p>Star tilts her head softly.</p>
+  <input type="text" id="usernameInput" placeholder="What should I call you?" />
+  <button id="saveName">Enter</button>
+</div>
+
+<!-- CARD SCENE -->
+<div class="scene">
+  <div class="card">
+
+    <div class="card-inner">
+
+      <!-- FRONT -->
+      <div class="card-face front">
+  <div class="layer bg"></div>
+
+  <div class="layer character">
+    <img src="star-tea.png">
+  </div>
+
+  <div class="layer title">Escape With Us</div>
+  <div class="layer banner">Chimera Cat Cafe</div>
+
+  <div class="shine"></div>
+</div>
+
+     
+
+      <!-- BACK -->
+      <div class="card-face back">
+        <div class="message">
+          <h2>Star Speaks</h2>
+          <p class="quote"></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ROOMS -->
+<div class="rooms">
+  <div class="room locked">☕ Tea Room</div>
+  <div class="room locked">📚 Library</div>
+</div>
+
+<script src="tilt.js"></script>
+</body>
+</html>
