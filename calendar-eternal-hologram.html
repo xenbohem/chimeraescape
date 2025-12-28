@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Obsidian Veil Calendar: Cerulean Echoes – Directors Cut</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #000000;
+            background: 
+                linear-gradient(45deg, #000000 50%, #0047AB 100%),
+                radial-gradient(circle, rgba(0, 123, 167, 0.2) 1px, transparent 1px),
+                radial-gradient(circle, rgba(0, 123, 167, 0.2) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
+            background-position: 0 0, 0 0, 10px 10px;
+            color: #E0FFFF;
+            margin: 0;
+            padding: 20px;
+            animation: glitch 5s infinite;
+        }
+        @keyframes glitch {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; transform: translateX(1px); }
+        }
+        h1, h2 {
+            color: #007BA7;
+            text-align: center;
+            text-shadow: 0 0 15px #007BA7;
+        }
+        /* Jumpscare Styles with Glitch Vanish */
+        .jumpscare {
+            position: fixed;
+            top: 50px;
+            right: -300px;
+            width: 250px;
+            height: 250px;
+            z-index: 10;
+            animation: popOutAndGlitchVanish 15s ease-out forwards;
+        }
+        .jumpscare video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: drop-shadow(0 0 30px #007BA7);
+            border: 2px solid #007BA7;
+        }
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(45deg, #000000 0%, transparent 50%, #000000 100%);
+            background-size: 4px 4px, 100% 100%;
+            opacity: 0;
+            animation: glitchEffect 15s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes popOutAndGlitchVanish {
+            0% { right: -300px; opacity: 0; }
+            20% { right: 20px; opacity: 1; transform: scale(1.2); }
+            87% { right: 20px; opacity: 1; transform: scale(1); }
+            93% { right: 20px; opacity: 0.8; transform: scale(1.05); }
+            100% { right: 20px; opacity: 0; transform: scale(0.8); }
+        }
+        @keyframes glitchEffect {
+            0%, 87% { opacity: 0; filter: none; }
+            87% { opacity: 0.3; filter: grayscale(100%) contrast(200%) brightness(150%); }
+            90% { opacity: 0.6; filter: sepia(50%) hue-rotate(90deg) saturate(300%); }
+            93% { opacity: 0.8; filter: invert(100%) blur(1px); }
+            96% { opacity: 0.9; background-color: #000000; }
+            100% { opacity: 1; background-color: #000000; filter: none; }
+        }
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #007BA7;
+            color: #000000;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            display: none;
+        }
+        /* Audio Drawer Styles */
+        .drawer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #000000;
+            border-top: 2px solid #007BA7;
+            box-shadow: 0 -5px 15px rgba(0, 123, 167, 0.5);
+            transform: translateY(100%);
+            transition: transform 0.5s ease;
+            z-index: 5;
+        }
+        .drawer.open {
+            transform: translateY(0);
+        }
+        .drawer-toggle {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #007BA7;
+            color: #000000;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            font-size: 1em;
+        }
+        .drawer-content {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+        .drawer-button {
+            background: #0047AB;
+            color: #E0FFFF;
+            border: 1px solid #007BA7;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: block;
+            border-radius: 5px;
+        }
+        .drawer-button:hover {
+            background: #007BA7;
+            box-shadow: 0 0 10px #007BA7;
+        }
+        /* Rest of existing styles */
+        .month {
+            background-color: rgba(0, 71, 171, 0.9);
+            border: 2px solid #007BA7;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 25px #007BA7;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .day {
+            background-color: #000000;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #007BA7;
+            box-shadow: inset 0 0 10px rgba(0, 123, 167, 0.7);
+        }
+        .day input[type="checkbox"] {
+            margin-top: 5px;
+            filter: hue-rotate(180deg);
+        }
+        .extras {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            margin-top: 10px;
+            border-left: 5px solid #007BA7;
+            box-shadow: 0 0 20px #007BA7;
+        }
+        nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: #E0FFFF;
+            margin: 0 10px;
+            text-decoration: none;
+            text-shadow: 0 0 10px #007BA7;
+        }
+        nav a:hover {
+            color: #007BA7;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        /* Portal Animation Styles */
+        .portal-placeholder {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        .vortex {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #007BA7 0%, #000000 70%);
+            border-radius: 50%;
+            animation: swirl 3s infinite linear;
+            box-shadow: 0 0 20px #007BA7;
+        }
+        @keyframes swirl {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        /* Shaky Link Styles */
+        .shaky-link {
+            display: inline-block;
+            animation: shake 2s infinite;
+            cursor: pointer;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+        /* Music Soundwave Styles */
+        .music-placeholder {
+            text-align: center;
+        }
+        .soundwave {
+            width: 200px;
+            height: 50px;
+            background: linear-gradient(90deg, #000000 0%, #007BA7 50%, #000000 100%);
+            animation: wave 2s infinite ease-in-out;
+            margin: 0 auto 10px;
+        }
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+        .recipe {
+            font-size: 0.8em;
+            color: #E0FFFF;
+            margin-top: 5px;
+        }
+        .recipe summary {
+            cursor: pointer;
+            color: #007BA7;
+            text-decoration: underline;
+        }
+        .recipe p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>The Obsidian Veil Calendar: Cerulean Echoes – Directors Cut Edition</h1>
+    
+    <!-- Jumpscare with Glitch Vanish -->
+    <div class="jumpscare">
+        <video id="jumpscare-video" autoplay preload="none">
+            <source src="starcompleteintro.mp4
+" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="glitch-overlay"></div>
+        <button class="play-button" onclick="playVideo()">Play Sound</button>
+    </div>
+    
+    <p>Enter the digital veil, where time glitches like a malfunctioning program. Mark your days in cerulean code, but beware the loops that echo forever. Less gore, more eerie isolation—Tron meets psychological horror.</p>
+    
+    <nav>
+        <a href="#january">January</a> | <a href="#february">February</a> | <a href="#march">March</a> | <a href="#april">April</a> | <a href="#may">May</a> | <a href="#june">June</a> | <a href="#july">July</a> | <a href="#august">August</a> | <a href="#september">September</a> | <a href="#october">October</a> | <a href="#november">November</a> | <a href="#december">December</a>
+    </nav>
+
+    <!-- Audio Drawer -->
+    <div class="drawer" id="audio-drawer">
+        <button class="drawer-toggle" onclick="toggleDrawer()">≡ Audio Drawer</button>
+        <div class="drawer-content">
+            <a href="https://example.com/social" class="drawer-button" data-audio="path/to/f3.mp3">Social Media</a>
+            <a href="https://example.com/lore" class="drawer-button" data-audio="path/to/f4.mp3">Lore</a>
+            <a href="https://example.com/shop" class="drawer-button" data-audio="path/to/f5.mp3">Shop</a>
+            <a href="https://example.com/help" class="drawer-button" data-audio="path/to/f6.mp3">Help</a>
+            <a href="https://example.com/about" class="drawer-button" data-audio="path/to/f7.mp3">About</a>
+        </div>
+    </div>
+
+    <div id="january" class="month">
+        <h2>January 2026: Digital Awakening</h2>
+        <p>The obsession boots up as code flickers in cerulean voids, distorting New Year's data streams. Full grid for 2026—mark your glitches and uncover hidden recipes for special events.</p>
+        <div class="calendar-grid">
+            <div class="day">Sun</div><div class="day">Mon</div><div class="day">Tue</div><div class="day">Wed</div><div class="day">Thu</div><div class="day">Fri</div><div class="day">Sat</div>
+            <div class="day"></div><div class="day"></div><div class="day"></div><div class="day"></div>
+            <div class="day">
+                1 <input type="checkbox">
+                <details class="recipe">
+                    <summary>New Year's Glitch Feast</summary>
+                    <p><strong>Event:</strong> Boot up the year with a digital awakening. <strong>Recipe: Cerulean Code Salad</strong> – Mix 1 cup of flickering pixels (simulated code snippets), 2 tbsp cerulean glow sauce (blue food coloring + vinegar), and a dash of forgotten time (stale bread crumbs). Toss in a void bowl. Serves 1 obsessive coder. Warning: May cause loops in reality.</p>
+                </details>
+            </div>
+            <div class="day">2</div><div class="day">3</div><div class="day">4</div><div class="day">5</div><div class="day">6</div><div class="day">7</div>
+            <div class="day">8</div><div class="day">9</div><div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div>
+            <div class="day">
+                14 <input type="checkbox">
+                <details class="recipe">
+                    <summary>Mid-Month Echo Valentine's</summary>
+                    <p><strong>Event:</strong> A day for digital echoes of love. <strong>Recipe: Looping Heart Circuit</strong> – Bake 2 circuit-board cookies (use pretzels for wires), fill with cerulean jam (blueberry + indigo dye), and top with echoing sprinkles (pop rocks). Share with your virtual companion. Serves 2 in eternal sync.</p>
+                </details>
+            </div>
+            <div class="day">15</div><div class="day">16</div><div class="day">17</div><div class="day">18</div><div class="day">19</div><div class="day">20</div>
+            <div class="day">
+                21 <input type="checkbox">
+                <details class="recipe">
+                    <summary>Void Solstice Ritual</summary>
+                    <p><strong>Event:</strong> Honor the black void. <strong>Recipe: Obsidian Echo Soup</strong> – Simmer 3 cups of digital broth (chicken stock + blue LEDs for glow), add chunks of forgotten data (potatoes), and stir in cerulean whispers (chopped onions). Garnish with a glitch leaf. Serves 1, but echoes for days.</p>
+                </details>
+            </div>
+            <div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div><div class="day">26</div><div class="day">27</div>
+            <div class="day">
+                28 <input type="checkbox">
+                <details class="recipe">
+                    <summary>Pre-End Glitch Gala</summary>
+                    <p><strong>Event:</strong> Celebrate the month's close with chaos. <strong>Recipe: Tron Time Warp Cake</strong> – Layer black cake (chocolate base), cerulean frosting (blue icing), and embed "time loops" (twisted licorice). Decorate with pixel candles. Cuts into infinite slices.</p>
+                </details>
+            </div>
+            <div class="day">29</div><div class="day">30</div><div class="day">31</div>
+        </div>
+        <div class="extras">
+            <h3>Directors Cut: Code Logs</h3>
+            <p>In this sequence, the cerulean grid represents fractured time. Log your glitch: [Blank for user input].</p>
+            <div class="portal-placeholder">
+                <div class="vortex"></div>
+                <p>Portal to the Void: Stare long enough, and time may loop.</p>
+            </div>
+            <a href="https://example.com/hidden-lore-page" target="_blank" class="shaky-link">
+                <div style="background-color: #000000; padding: 10px; border: 1px dashed #007BA7; color: #007BA7;">Shaky Digital Rift: Click to enter hidden lore (opens new tab).</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Placeholder for other months -->
+    <div id="february" class="month">
+        <h2>February 2026: Echoing Loops</h2>
+        <p>Paranoia builds with repeating digital whispers, trapping users in endless cycles. (Expand grid and extras similarly to January for full interactivity.)</p>
+        <!-- Add full grid here if desired -->
+    </div>
+    <!-- Repeat for March-December as needed -->
+
+    <footer>
+        <h2>Bonus Materials: Digital Archives</h2>
+        <p>Full story: A user's obsession glitches the calendar into a virtual nightmare. Prophecy: In July, the neon feast corrupts all data.</p>
+        <!-- Music-Themed Element -->
+        <div class="music-placeholder">
+            <div class="soundwave"></div>
+            <audio id="echo-audio" src="path/to/ambient-track.mp3" loop preload="none"></audio>
+            <button onclick="playEcho()">Play Digital Echo (Ambient Horror Synth)</button>
+        </div>
+        <p>For extras, imagine QR links to glitchy audio.</p>
+    </footer>
+
+    <script>
+        const video = document.getElementById('jumpscare-video');
+        const playButton = document.querySelector('.play-button');
+        const drawer = document.getElementById('audio-drawer');
+        const drawerButtons = document.querySelectorAll('.drawer-button');
+        
+        // Jumpscare video logic: Play once on pop, stop after
+        setTimeout(() => {
+            video.muted = false;
+            video.play().then(() => {
+                video.addEventListener('ended', () => {
+                    video.pause();
+                    video.currentTime = 0;
+                });
+            }).catch(() => {
+                // Show button if autoplay fails
+                playButton.style.display = 'block';
+            });
+        }, 3000);
+        
+        function playVideo() {
+            video.muted = false;
+            video.play();
+            playButton.style.display = 'none';
+            video.addEventListener('ended', () => {
+                video.pause();
+                video.currentTime = 0;
+            });
+        }
+        
+        // Drawer toggle
+        function toggleDrawer() {
+            drawer.classList.toggle('open');
+        }
+        
+        // Audio for drawer buttons: Hover preview, click full play + link
+        drawerButtons.forEach(button => {
+            const audioSrc = button.getAttribute('data-audio');
+            const audio = new Audio(audioSrc);
+            
+            button.addEventListener('mouseenter', () => {
+                audio.currentTime = 0; // Reset for hover
+                audio.play();
+            });
+            
+            button.addEventListener('click', () => {
+                audio.currentTime = 0;
+                audio.play();
+                // Link opens in new tab/window as per href
+            });
+        });
+        
+        // Footer music play
+        function playEcho() {
+            document.getElementById('echo-audio').play();
+        }
+    </script>
+</body>
+</html>
