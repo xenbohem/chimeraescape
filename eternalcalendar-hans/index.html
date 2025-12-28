@@ -39,12 +39,23 @@
             animation: popOutAndGlitchVanish 15s ease-out forwards;
         }
         .jumpscare video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: drop-shadow(0 0 30px #007BA7);
-            border: 2px solid #007BA7;
-        }
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: drop-shadow(0 0 30px #007BA7);
+    border: 2px solid #007BA7;
+    border-radius: 10px; /* Softens the frame for fluidity */
+    box-shadow: 
+        0 0 20px rgba(0, 123, 167, 0.8), /* Inner cerulean glow */
+        0 0 40px rgba(100, 149, 237, 0.6), /* Middle cornflower ombre */
+        0 0 60px rgba(0, 123, 167, 0.4); /* Outer cerulean fade */
+    animation: glowPulse 4s infinite ease-in-out; /* Subtle pulse for fluidity */
+}
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 123, 167, 0.8), 0 0 40px rgba(100, 149, 237, 0.6), 0 0 60px rgba(0, 123, 167, 0.4); }
+    50% { box-shadow: 0 0 25px rgba(0, 123, 167, 1), 0 0 50px rgba(100, 149, 237, 0.8), 0 0 75px rgba(0, 123, 167, 0.6); }
+}
+    
         .glitch-overlay {
             position: absolute;
             top: 0;
