@@ -802,4 +802,14 @@
         const muteButton = document.getElementById('mute-button');
         isMuted = !isMuted;
         allAudios.forEach(audio => {
-            if
+                    if (audio) {
+            audio.muted = isMuted;
+        }
+    });
+    if (currentAudio) currentAudio.muted = isMuted; // Include radio audio
+    muteButton.textContent = isMuted ? 'Unmute All Audio' : 'Mute All Audio';
+    muteButton.classList.toggle('muted', isMuted);
+}
+</script>
+</body>
+</html>
