@@ -798,4 +798,12 @@
         isMuted = !isMuted;
         allAudios.forEach(audio => {
             if (audio) {
-                audio.muted = isM
+                audio.muted = isMuted
+                        });
+        if (currentAudio) currentAudio.muted = isMuted; // Include radio audio
+        muteButton.textContent = isMuted ? 'Unmute All Audio' : 'Mute All Audio';
+        muteButton.classList.toggle('muted', isMuted);
+    }
+</script>
+</body>
+</html>
