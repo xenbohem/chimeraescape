@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Obsidian Veil Calendar: Cerulean Echoes – Directors Cut</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #000000;
+            background: 
+                linear-gradient(45deg, #000000 50%, #0047AB 100%),
+                radial-gradient(circle, rgba(0, 123, 167, 0.2) 1px, transparent 1px),
+                radial-gradient(circle, rgba(0, 123, 167, 0.2) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
+            background-position: 0 0, 0 0, 10px 10px;
+            color: #E0FFFF;
+            margin: 0;
+            padding: 20px;
+            animation: glitch 5s infinite;
+        }
+        @keyframes glitch {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; transform: translateX(1px); }
+        }
+        h1, h2 {
+            color: #007BA7;
+            text-align: center;
+            text-shadow: 0 0 15px #007BA7;
+        }
+        /* Jumpscare Styles with Glitch Vanish */
+        .jumpscare {
+            position: fixed;
+            top: 50px;
+            right: -300px;
+            width: 250px;
+            height: 250px;
+            z-index: 10;
+            animation: popOutAndGlitchVanish 15s ease-out forwards;
+        }
+        .jumpscare video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: drop-shadow(0 0 30px #007BA7);
+    border: 2px solid #007BA7;
+    border-radius: 10px; /* Softens the frame for fluidity */
+    box-shadow: 
+        0 0 20px rgba(0, 123, 167, 0.8), /* Inner cerulean glow */
+        0 0 40px rgba(100, 149, 237, 0.6), /* Middle cornflower ombre */
+        0 0 60px rgba(0, 123, 167, 0.4); /* Outer cerulean fade */
+    animation: glowPulse 4s infinite ease-in-out; /* Subtle pulse for fluidity */
+}
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 123, 167, 0.8), 0 0 40px rgba(100, 149, 237, 0.6), 0 0 60px rgba(0, 123, 167, 0.4); }
+    50% { box-shadow: 0 0 25px rgba(0, 123, 167, 1), 0 0 50px rgba(100, 149, 237, 0.8), 0 0 75px rgba(0, 123, 167, 0.6); }
+}
+    
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(45deg, #000000 0%, transparent 50%, #000000 100%);
+            background-size: 4px 4px, 100% 100%;
+            opacity: 0;
+            animation: glitchEffect 15s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes popOutAndGlitchVanish {
+            0% { right: -300px; opacity: 0; }
+            20% { right: 20px; opacity: 1; transform: scale(1.2); }
+            87% { right: 20px; opacity: 1; transform: scale(1); }
+            93% { right: 20px; opacity: 0.8; transform: scale(1.05); }
+            100% { right: 20px; opacity: 0; transform: scale(0.8); }
+        }
+        @keyframes glitchEffect {
+            0%, 87% { opacity: 0; filter: none; }
+            87% { opacity: 0.3; filter: grayscale(100%) contrast(200%) brightness(150%); }
+            90% { opacity: 0.6; filter: sepia(50%) hue-rotate(90deg) saturate(300%); }
+            93% { opacity: 0.8; filter: invert(100%) blur(1px); }
+            96% { opacity: 0.9; background-color: #000000; }
+            100% { opacity: 1; background-color: #000000; filter: none; }
+        }
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #007BA7;
+            color: #000000;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            display: none;
+        }
+        .skip-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #E0FFFF;
+            border: 1px solid #007BA7;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            z-index: 11;
+        }
+        /* Audio Drawer Styles */
+        .drawer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #000000;
+            border-top: 2px solid #007BA7;
+            box-shadow: 0 -5px 15px rgba(0, 123, 167, 0.5);
+            transform: translateY(100%);
+            transition: transform 0.5s ease;
+            z-index: 5;
+        }
+        .drawer.open {
+            transform: translateY(0);
+        }
+        .drawer-toggle {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #007BA7;
+            color: #000000;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            font-size: 1em;
+        }
+        .drawer-content {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+        .drawer-button {
+            background: #0047AB;
+            color: #E0FFFF;
+            border: 1px solid #007BA7;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: block;
+            border-radius: 5px;
+        }
+        .drawer-button:hover {
+            background: #007BA7;
+            box-shadow: 0 0 10px #007BA7;
+        }
+        /* Rest of existing styles */
+        .month {
+            background-color: rgba(0, 71, 171, 0.9);
+            border: 2px solid #007BA7;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 25px #007BA7;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .day {
+            background-color: #000000;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #007BA7;
+            box-shadow: inset 0 0 10px rgba(0, 123, 167, 0.7);
+        }
+        .day input[type="checkbox"] {
+            margin-top: 5px;
+            filter: hue-rotate(180deg);
+        }
+        .extras {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            margin-top: 10px;
+            border-left: 5px solid #007BA7;
+            box-shadow: 0 0 20px #007BA7;
+        }
+        nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: #E0FFFF;
+            margin: 0 10px;
+            text-decoration: none;
+            text-shadow: 0 0 10px #007BA7;
+            cursor: pointer;
+        }
+        nav a:hover {
+            color: #007BA7;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        /* Portal Animation Styles */
+        .portal-placeholder {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        .vortex {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #007BA7 0%, #000000 70%);
+            border-radius: 50%;
+            animation: swirl 3s infinite linear;
+            box-shadow: 0 0 20px #007BA7;
+        }
+        @keyframes swirl {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        /* Shaky Link Styles */
+        .shaky-link {
+            display: inline-block;
+            animation: shake 2s infinite;
+            cursor: pointer;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+        /* Radio Player Styles */
+        .radio-player {
+            text-align: center;
+            margin: 20px 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border: 2px solid #007BA7;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #007BA7;
+        }
+        .radio-timeline {
+            position: relative;
+            width: 80%;
+            height: 4px;
+            background: linear-gradient(90deg, #000000 0%, #007BA7 50%, #000000 100%);
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+        .station {
+            position: absolute;
+            top: -15px;
+            width: 20px;
+            height: 20px;
+            background: #0047AB;
+            border: 2px solid #007BA7;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+            text-align: center;
+            line-height: 16px;
+            font-size: 0.7em;
+            color: #E0FFFF;
+        }
+        .station:hover, .station.active {
+            background: #007BA7;
+            box-shadow: 0 0 15px #007BA7;
+        }
+        .radio-play-button {
+            background: #007BA7;
+            color: #000000;
+            border: none;
+            padding: 15px 30px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.2em;
+            margin-top: 10px;
+            box-shadow: 0 0 10px rgba(0, 123, 167, 0.5); /* Subtle glow */
+            animation: subtleGlow 2s infinite ease-in-out;
+        }
+        @keyframes subtleGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 123, 167, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(0, 123, 167, 0.8); }
+        }
+        .radio-play-button:hover {
+            background: #0047AB;
+        }
+        .recipe {
+            font-size: 0.8em;
+            color: #E0FFFF;
+            margin-top: 5px;
+        }
+        .recipe summary {
+            cursor: pointer;
+            color: #007BA7;
+            text-decoration: underline;
+        }
+        .recipe p {
+            margin: 5px 0;
+        }
+        /* Mute Button Styles */
+        .mute-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #007BA7;
+            color: #000000;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 20;
+            font-size: 0.9em;
+        }
+        .mute-button.muted {
+            background: #0047AB;
+            color: #E0FFFF;
+        }
+        /* Navigation Arrows */
+        .nav-arrows {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .arrow-button {
+            background: #007BA7;
+            color: #000000;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .arrow-button:hover {
+            background: #0047AB;
+        }
+    </style>
+</head>
+<body>
+    <h1>The Obsidian Calendar: Cerulean Echoes – Directors Cut Edition</h1>
+    
+    <!-- Global Mute Button -->
+    <button class="mute-button" id="mute-button" onclick="toggleMute()">Mute All Audio</button>
+    
+    <!-- Jumpscare with Glitch Vanish -->
+    <div class="jumpscare">
+        <video id="jumpscare-video" autoplay preload="none">
+            <source src="https://xenbohem.github.io/chimeraescape/Hans-Holo-greeting.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="glitch-overlay"></div>
+        <button class="play-button" onclick="playVideo()">Play Sound</button>
+        <button class="skip-button" onclick="skipVideo()">Skip Intro</button>
+    </div>
+    
+    <p>Enter the digital veil, where time glitches like a malfunctioning program. Mark your days in cerulean code, but beware the loops that echo forever. </p>
+    
+    <nav>
+        <a onclick="jumpToMonth(0)">January</a> | <a onclick="jumpToMonth(1)">February</a> | <a onclick="jumpToMonth(2)">March</a> | <a onclick="jumpToMonth(3)">April</a> | <a onclick="jumpToMonth(4)">May</a> | <a onclick="jumpToMonth(5)">June</a> | <a onclick="jumpToMonth(6)">July</a> | <a onclick="jumpToMonth(7)">August</a> | <a onclick="jumpToMonth(8)">September</a> | <a onclick="jumpToMonth(9)">October</a> | <a onclick="jumpToMonth(10)">November</a> | <a onclick="jumpToMonth(11)">December</a>
+    </nav>
+
+    <!-- Eternal Navigation Arrows -->
+    <div class="nav-arrows">
+        <button id="prev-arrow" class="arrow-button" onclick="navigateMonth(-1)">← Previous</button>
+        <button id="next-arrow" class="arrow-button" onclick="navigateMonth(1)">Next →</button>
+    </div>
+
+    <!-- Dynamic Month Container (Combined System) -->
+    <div id="current-month" class="month">
+        <!-- Content will be generated by JS -->
+    </div>
+
+    <!-- Audio Drawer -->
+    <div class="drawer" id="audio-drawer">
+        <button class="drawer-toggle" onclick="toggleDrawer()">≡ Audio Drawer</button>
+        <div class="drawer-content">
+            <a href="https://example.com/social" class="drawer-button" data-audio="path/to/f3.mp3">Social Media</a>
+            <a href="https://example.com/lore" class="drawer-button" data-audio="path/to/f4.mp3">Lore</a>
+            <a href="https://example.com/shop" class="drawer-button" data-audio="path/to/f5.mp3">Shop</a>
+            <a href="https://example.com/help" class="drawer-button" data-audio="path/to/f6.mp3">Help</a>
+            <a href="https://example.com/about" class="drawer-button" data-audio="path/to/f7.mp3">About</a>
+        </div>
+    </div>
+
+    <footer>
+        <h2>Bonus Materials: Digital Archives</h2>
+        <p>Full story: A user's obsession glitches the calendar into a virtual universe. Prophecy: In July, the Summer feast a time to for gratitude.</p>
+        <!-- Radio Player -->
+        <div class="radio-player">
+            <h3>Cerulean Radio: Tune into Escape Chimera-Cafe</h3>
+            <div class="radio-timeline">
+                <div class="station" style="left: 10%;" data-station="echo" title="Digital Echo">E</div>
+                <div class="station" style="left: 30%;" data-station="social" title="Social Media">S</div>
+                
+                <div class="station" style="left: 70%;" data-station="shop" title="Shop">Sh</div>
+                <div class="station" style="left: 90%;" data-station="help" title="Help">H</div>
+            </div>
+            <button class="radio-play-button" onclick="playSelectedStation()">▶ Play Station</button>
+            <p>Click a station on the timeline to select, then hit play to tune in.</p>
+        </div>
+        <p>For extras, imagine QR links to glitchy audio.</p>
+    </footer>
+
+    <script>
+    let currentMonth = 0; // 0 = January
+    let currentYear = 2026;
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    let currentStation = null; // For radio player
+    let currentAudio = null; // Active audio for radio
+
+    function generateMonth() {
+        const monthContainer = document.getElementById('current-month');
+        if (!monthContainer) {
+            console.error('Month container not found!');
+            return;
+        }
+        
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // 0 = Sunday
+        const monthName = monthNames[currentMonth];
+        
+        console.log(`Generating ${monthName} ${currentYear}`); // Debug log
+        
+        // Generate grid HTML
+        let gridHTML = '<div class="calendar-grid">';
+        gridHTML += '<div class="day">Sun</div><div class="day">Mon</div><div class="day">Tue</div><div class="day">Wed</div><div class="day">Thu</div><div class="day">Fri</div><div class="day">Sat</div>';
+        
+        // Empty cells for days before the 1st
+        for (let i = 0; i < firstDay; i++) {
+            gridHTML += '<div class="day"></div>';
+        }
+        
+        // Days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            let dayHTML = `<div class="day">${day} <input type="checkbox">`;
+            // Add sample recipes for key days (expand as needed)
+            if (day === 1) {
+                dayHTML += `<details class="recipe"><summary>New Year's Glitch Feast</summary><p><strong>Recipe: Cerulean Code Salad</strong> – Mix 1 cup of flickering pixels (simulated code snippets), 2 tbsp cerulean glow sauce (blue food coloring + vinegar), and a dash of forgotten time (stale bread crumbs). Toss in a void bowl. Serves 1 obsessive coder. Warning: May cause loops in reality.</p></details>`;
+            } else if (day === 14) {
+                dayHTML += `<details class="recipe"><summary>Mid-Month Echo Valentine's</summary><p><strong>Recipe: Looping Heart Circuit</strong> – Bake 2 circuit-board cookies (use pretzels for wires), fill with cerulean jam (blueberry + indigo dye), and top with echoing sprinkles (pop rocks). Share with your virtual companion. Serves 2 in eternal sync.</p></details>`;
+            } else if (day === 21) {
+                dayHTML += `<details class="recipe"><summary>Void Solstice Ritual</summary><p><strong>Recipe: Obsidian Echo Soup</strong> – Simmer 3 cups of digital broth (chicken stock + blue LEDs for glow), add chunks of forgotten data (potatoes), and stir in cerulean whispers (chopped onions). Garnish with a glitch leaf. Serves 1, but echoes for days.</p></details>`;
+            } else if (day === 28) {
+                dayHTML += `<details class="recipe"><summary>Pre-End Glitch Gala</summary><p><strong>Recipe: Tron Time Warp Cake</strong> – Layer black cake (chocolate base), cerulean frosting (blue icing), and embed "time loops" (twisted licorice). Decorate with pixel candles. Cuts into infinite slices.</p></details>`;
+            } // Expand for more days/months
+            dayHTML += '</div>';
+            gridHTML += dayHTML;
+        }
+        gridHTML += '</div>';
+        
+        // Full month HTML
+        monthContainer.innerHTML = `
+            <h2>${monthName} ${currentYear}: Digital Awakening</h2>
+            <p>The obsession evolves across time. Mark your days in this eternal loop.</p>
+            ${gridHTML}
+            <div class="extras">
+                <h3>Directors Cut: Code Logs</h3>
+                <p>In this eternal sequence, time fractures endlessly. Log your glitch.</p>
+                <div class="portal-placeholder">
+                    <div class="vortex"></div>
+                    <p>Portal to the Void: Stare long enough, and time may loop.</p>
+                </div>
+                <a href="https://example.com/hidden-lore-page" target="_blank" class="shaky-link">
+                    <div style="background-color: #000000; padding: 10px; border: 1px dashed #007BA7; color: #007BA7;">Shaky Digital Rift: Click to enter hidden lore.</div>
+                </a>
+            </div>
+        `;
+    }
+
+    function navigateMonth(direction) {
+        console.log(`Navigating ${direction === -1 ? 'previous' : 'next'}`); // Debug log
+        
+        // Glitch effect on arrow click
+        const arrow = direction === -1 ? document.getElementById('prev-arrow') : document.getElementById('next-arrow');
+        if (arrow) {
+            arrow.style.opacity = '0.5';
+            setTimeout(() => arrow.style.opacity = '1', 200);
+        }
+        
+        // Update month/year
+        currentMonth += direction;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        } else if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        generateMonth();
+    }
+
+    function jumpToMonth(monthIndex) {
+        currentMonth = monthIndex;
+        generateMonth();
+        // Optional: Scroll to the month container
+        document.getElementById('current-month').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Radio player functionality
+    const stations = document.querySelectorAll('.station');
+    stations.forEach(station => {
+        station.addEventListener('click', () => {
+            // Remove active class from all
+            stations.forEach(s => s.classList.remove('active'));
+            // Add to clicked
+            station.classList.add('active');
+            currentStation = station.getAttribute('data-station');
+        });
+    });
+
+    function playSelectedStation() {
+        if (!currentStation) {
+            alert('Select a station first!');
+            return;
+        }
+        // Stop any current audio
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+        // Map station to audio src (use drawer button data or footer audio)
+        let src = '';
+        if (currentStation === 'echo') {
+            src = 'https://xenbohem.github.io/chimeraescape/audio/Soft-Rain.mp3'; // Footer echo
+        } else {
+            const drawerBtn = document.querySelector(`.drawer-button[data-audio*="${currentStation}"]`);
+            if (drawerBtn) {
+                src = drawerBtn.getAttribute('data-audio');
+            }
+        }
+        if (src) {
+            currentAudio = new Audio(src);
+            currentAudio.play().catch(e => console.log('Radio play failed:', e));
+        }
+    }
+
+    // Initialize with January 2026
+    generateMonth();
+
+    // Jumpscare video logic
+    const video = document.getElementById('jumpscare-video');
+    const playButton = document.querySelector('.play-button');
+    if (video && playButton) {
+        setTimeout(() => {
+            video.muted = false;
+            video.play().then(() => {
+                video.addEventListener('ended', () => {
+                    video.pause();
+                    video.currentTime = 0;
+                });
+            }).catch(() => {
+                playButton.style.display = 'block';
+            });
+        }, 3000);
+    }
+    
+    function playVideo() {
+        if (video && playButton) {
+            video.muted = false;
+            video.play();
+            playButton.style.display = 'none';
+            video.addEventListener('ended', () => {
+                video.pause();
+                video.currentTime = 0;
+            });
+        }
+    }
+
+    function skipVideo() {
+        if (video) {
+            video.pause();
+            video.currentTime = video.duration || 0; // Skip to end
+            document.querySelector('.jumpscare').style.display = 'none'; // Hide jumpscare
+        }
+    }
+    
+    // Drawer toggle
+    function toggleDrawer() {
+        const drawer = document.getElementById('audio-drawer');
+        if (drawer) {
+            drawer.classList.toggle('open');
+        }
+    }
+    
+    // Audio for drawer buttons: Hover preview, click full play + link
+    const drawerButtons = document.querySelectorAll('.drawer-button');
+    drawerButtons.forEach(button => {
+        const audioSrc = button.getAttribute('data-audio');
+        const audio = new Audio(audioSrc);
+        
+        button.addEventListener('mouseenter', () => {
+            audio.currentTime = 0; // Reset for hover
+            audio.play().catch(e => console.log('Audio play failed:', e));
+        });
+        
+        button.addEventListener('click', () => {
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log('Audio play failed:', e));
+            // Link opens in new tab/window as per href
+        });
+    });
+    
+    // Footer music play (legacy, now part of radio)
+    function playEcho() {
+        const echoAudio = document.getElementById('echo-audio');
+        if (echoAudio) {
+            echoAudio.play().catch(e => console.log('Echo play failed:', e));
+        }
+    }
+
+    // Global mute functionality
+    let isMuted = false;
+    const allAudios = [video, ...Array.from(document.querySelectorAll('audio')), ...Array.from(document.querySelectorAll('.drawer-button')).map(btn => new Audio(btn.getAttribute('data-audio')))];
+
+    function toggleMute() {
+        const muteButton = document.getElementById('mute-button');
+        isMuted = !isMuted;
+        allAudios.forEach(audio => {
+            if (audio) {
+                audio.muted = isMuted;
+            }
+        });
+        if (currentAudio) currentAudio.muted = isMuted; // Include radio audio
+        muteButton.textContent = isMuted ? 'Unmute All Audio' : 'Mute All Audio';
+        muteButton.classList.toggle('muted', isMuted);
+    }
+</script>
+</body>
+</html>
+                
+                
+                
+                <div class="station" style="left: 50%;" data-station="lore" title="Lore">L</div>
+                <div class="
