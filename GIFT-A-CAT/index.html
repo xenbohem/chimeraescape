@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rescue Cats & Bots with Ko-fi Support</title>
+<style>
+  /* Basic styling, same as previous, omitted for brevity, but include all previous styles here */
+    
+    body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #b19cd9, #6f4e37);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+  }
+
+  #intro {
+    max-width: 800px;
+    padding: 20px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  #profiles {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+  }
+  .profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: filter 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+  .profile img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    filter: grayscale(100%);
+    transition: filter 0.5s, box-shadow 0.3s;
+  }
+  @keyframes glitch {
+    0% { clip-path: inset(0); }
+    20% { clip-path: inset(0 0 10% 0); }
+    40% { clip-path: inset(0 0 20% 0); }
+    60% { clip-path: inset(0 0 10% 0); }
+    80% { clip-path: inset(0); }
+    100% { clip-path: inset(0); }
+  }
+  .profile:hover img {
+    filter: grayscale(0%) brightness(1.2);
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff inset;
+    animation: glitch 0.3s infinite;
+    transform: scale(1.05);
+  }
+  #chatContainer {
+    width: 90%;
+    max-width: 700px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+  }
+  #messages {
+    height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.5s;
+  }
+  .message {
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 15px;
+    max-width: 80%;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s forwards;
+  }
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  #inputSection {
+    display: flex;
+    padding: 10px;
+    background: rgba(0,0,0,0.4);
+  }
+  #userInput {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+  }
+  #sendBtn {
+    margin-left: 10px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(37,117,252,0.8);
+  }
+  #sendBtn:hover {
+    box-shadow: 0 0 15px rgba(37,117,252,1);
+  }
+  #donateBtn {
+    margin: 20px;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #8e2de2, #4a00e0);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(78, 115, 223, 0.7);
+  }
+  #donateBtn:hover {
+    box-shadow: 0 0 20px rgba(78, 115, 223, 1);
+  }
+  @media(max-width: 768px){
+    #profiles {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="intro">
+  <h1>Support A Cat from Our Cafe</h1>
+  <p>Meet our mischievous rescue kittens! They love to play, bite gently, and are full of love. Click on each cat to get to know them, and chat with your favorite furry friend. Support their rescue by donating below!</p>
+</div>
+
+<div id="profiles">
+  <!-- Assigning cats to notes G, E, F, C, A, B -->
+  <div class="profile" data-cat="Tortoise Shell Princess" data-color="#f7b733" data-voice='"Hi, Meow! I\'m Tortoise Shell Princess. I adore belly rubs, I\'m super fluffy, and I love to play with my sibs! Let\'s have some fun!"' data-note="G">
+    <img src="https://3society.neocities.org/GUILD.THERIAN/Adoption%20center.html/tottoiseshell5.jpeg" alt="Tortoise Shell Princess" />
+    <span>Tortoise Shell</span>
+  </div>
+  <div class="profile" data-cat="Spider" data-color="#34e89e" data-voice='"I\'m Spider, and I love to climb things! I enjoy my alone time but I\'m always ready to play at the drop of a hat. Want to join me?"' data-note="E">
+    <img src="https://3society.neocities.org/GUILD.THERIAN/Adoption%20center.html/99tuxblk.jpeg" alt="Spider" />
+    <span>Spider</span>
+  </div>
+  <div class="profile" data-cat="Rufian" data-color="#f94144" data-voice='"Hi, I\'m Rufian! I play all day, so be ready for some fun. Oh, and I love to be petted—come give me some love!"' data-note="F">
+    <img src="https://3society.neocities.org/GUILD.THERIAN/Adoption%20center.html/tuxtwin.jpeg" alt="Rufian" />
+    <span>Rufian</span>
+  </div>
+  <div class="profile" data-cat="Foodie Tabby" data-color="#f9c74f" data-voice='"Meow! I\'m the foodie—love eating and playing! Want to share a snack?"' data-note="C">
+    <img src="https://3society.neocities.org/GUILD.THERIAN/Adoption%20center.html/bengaltabby.jpeg" alt="Foodie Tabby" />
+    <span>Foodie Tabby</span>
+  </div>
+  <div class="profile" data-cat="Grey Racer" data-color="#3f51b5" data-voice='"Hey! I\'m the younger grey one. I\'ll race you to the toy or treat—ready, set, go!"' data-note="A">
+    <img src="https://3society.neocities.org/GUILD.THERIAN/Adoption%20center.html/grey4.jpeg" alt="Grey Racer" />
+    <span>Grey Racer</span>
+  </div>
+  <div class="profile" data-cat="Bot Cat" data-color="#a29bfe" data-voice='"Meow! I\'m your friendly bot-cat. I love to chat, answer questions, and learn new tricks. Let\'s have some fun together!"' data-note="B">
+    <img src="https://3society.neocities.org/GUILD.THERIAN/Adoption%20center.html/GIFTAKITTEN/giftbutton.jpeg" alt="Bot Cat" />
+    <span>Bot Cat</span>
+  </div>
+</div>
+
+<div id="chatContainer">
+  <div id="messages">
+    <div class="message bot" style="opacity:1; transform:translateY(0);">Hi! Click a cat to chat or <a href="https://ko-fi.com/yourpage" target="_blank" style="color:#fff; text-decoration:underline;">support their rescue on Ko-fi</a>!</div>
+  </div>
+  <div id="inputSection">
+    <input type="text" id="userInput" placeholder="Type your message..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<button id="donateBtn" onclick="window.open('https://ko-fi.com/yourpage', '_blank')">Donate</button>
+
+<script>
+// All previous scripts from before, now with support links and note assignments
+const messages = document.getElementById('messages');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const profiles = document.querySelectorAll('.profile');
+let currentCat = null;
+
+// Cats data with responses, colors, and notes
+const cats = {
+  "Tortoise Shell Princess": {
+    color: "#f7b733",
+    voice: `"Hi, Meow! I\'m Tortoise Shell Princess. I adore belly rubs, I\'m super fluffy, and I love to play with my sibs! Let's have some fun!"`,
+    bgColor: "rgba(247, 183, 51, 0.2)",
+    note: "G"
+  },
+  "Spider": {
+    color: "#34e89e",
+    voice: `"I'm Spider, and I love to climb things! I enjoy my alone time but I'm always ready to play at the drop of a hat. Want to join me?"`,
+    bgColor: "rgba(52, 232, 158, 0.2)",
+    note: "E"
+  },
+  "Rufian": {
+    color: "#f94144",
+    voice: `"Hi, I'm Rufian! I play all day, so be ready for some fun. Oh, and I love to be petted—come give me some love!"`,
+    bgColor: "rgba(249, 65, 68, 0.2)",
+    note: "F"
+  },
+  "Foodie Tabby": {
+    color: "#f9c74f",
+    voice: `"Meow! I\'m the foodie—love eating and playing! Want to share a snack?"`,
+    bgColor: "rgba(249, 199, 79, 0.2)",
+    note: "C"
+  },
+  "Grey Racer": {
+    color: "#3f51b5",
+    voice: `"Hey! I\'m the younger grey one. I\'ll race you to the toy or treat—ready, set, go!"`,
+    bgColor: "rgba(63, 81, 181, 0.2)",
+    note: "A"
+  },
+  "Bot Cat": {
+    color: "#a29bfe",
+    voice: `"Meow! I'm your friendly bot-cat. I love to chat, answer questions, and learn new tricks. Let's have some fun together!"`,
+    bgColor: "rgba(162, 155, 254, 0.2)",
+    note: "B"
+  }
+};
+
+// Map notes to frequencies
+const noteFreqs = {
+  "G": 392,
+  "E": 329.63,
+  "F": 349.23,
+  "C": 261.63,
+  "A": 440,
+  "B": 493.88
+};
+
+// Hover & click interactions
+profiles.forEach(profile => {
+  const img = profile.querySelector('img');
+  profile.addEventListener('mouseenter', () => {
+    img.style.filter = "grayscale(0%) brightness(1.2)";
+  });
+  profile.addEventListener('mouseleave', () => {
+    if (currentCat !== profile.dataset.cat) {
+      img.style.filter = "grayscale(100%)";
+    }
+  });
+  profile.addEventListener('click', () => {
+    currentCat = profile.dataset.cat;
+    messages.parentElement.style.backgroundColor = cats[currentCat].bgColor;
+    // Show support link + play note
+    addMessage(`Support ${currentCat} on <a href="https://ko-fi.com/yourpage" target="_blank" style="color:#fff; text-decoration:underline;">Ko-fi</a>!`, 'bot');
+    playNoteForCat(cats[currentCat].note);
+  });
+});
+
+// Play note function
+function playNoteForCat(note) {
+  const freq = noteFreqs[note];
+  const duration = 0.6;
+  const now = audioCtx.currentTime;
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+
+  oscillator.type = 'square'; 
+  oscillator.frequency.setValueAtTime(freq, now);
+  gainNode.gain.setValueAtTime(0.2, now);
+  gainNode.gain.linearRampToValueAtTime(0, now + duration);
+
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  oscillator.start(now);
+  oscillator.stop(now + duration);
+}
+
+// Send message
+function sendMessage() {
+  const text = userInput.value.trim();
+  if (!text) return;
+  addMessage(text, 'user');
+  if (currentCat) {
+    setTimeout(() => {
+      addMessage(cats[currentCat].voice, 'bot');
+    }, 500);
+  } else {
+    setTimeout(() => {
+      addMessage("Click a cat to chat or <a href='https://ko-fi.com/yourpage' target='_blank' style='color:#fff; text-decoration:underline;'>support their rescue on Ko-fi</a>.", 'bot');
+    }, 500);
+  }
+  userInput.value = '';
+}
+
+// Auto-scroll
+let isUserScrolling = false;
+messages.addEventListener('scroll', () => {
+  const { scrollTop, scrollHeight, clientHeight } = messages;
+  if (scrollTop + clientHeight < scrollHeight - 10) {
+    isUserScrolling = true;
+  } else {
+    isUserScrolling = false;
+  }
+});
+
+// Add message with animation
+function addMessage(text, sender='bot') {
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'message ' + sender;
+  msgDiv.innerHTML = text; // use innerHTML to support links
+  messages.appendChild(msgDiv);
+  setTimeout(() => {
+    msgDiv.style.opacity = 1;
+    msgDiv.style.transform = 'translateY(0)';
+  }, 10);
+  if (!isUserScrolling) {
+    messages.scrollTop = messages.scrollHeight;
+  }
+}
+
+// Event listeners
+document.getElementById('sendBtn').addEventListener('click', () => { sendMessage(); });
+document.getElementById('userInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+// Audio context
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+</script>
