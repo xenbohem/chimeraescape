@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">  
+<html lang="en">
 <head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,7 +66,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 400px;
-            height: 350px;
+            height: 300px;
             background-color: rgba(0, 0, 0, 0.9);
             border: 2px solid #007BA7;
             border-radius: 10px;
@@ -79,8 +79,9 @@
         .chatbot-avatar {
             width: 60px;
             height: 60px;
-            margin: 0 auto 10px;
+            background: radial-gradient(circle, #007BA7 0%, #000000 70%);
             border-radius: 50%;
+            margin: 0 auto 10px;
             animation: avatarGlitch 3s infinite;
             box-shadow: 0 0 20px #007BA7;
         }
@@ -117,10 +118,6 @@
         }
         .chat-button:hover {
             background: #0047AB;
-        }
-        .typing {
-            font-style: italic;
-            color: #007BA7;
         }
         /* Jumpscare Styles with Glitch Vanish */
         .jumpscare {
@@ -425,7 +422,7 @@
             color: #E0FFFF;
         }
         /* Navigation Arrows */
-                .nav-arrows {
+              .nav-arrows {
             text-align: center;
             margin: 20px 0;
         }
@@ -456,7 +453,7 @@
     
     <!-- Chatbot Interface -->
     <div class="chatbot" id="chatbot">
-        <img src="https://via.placeholder.com/60x60/007BA7/000000?text=H" alt="Hans Avatar" class="chatbot-avatar"> <!-- Replace with your avatar image URL -->
+        <div class="chatbot-avatar"></div>
         <div class="chat-messages" id="chat-messages"></div>
         <input type="text" class="chat-input" id="chat-input" placeholder="Type your response...">
         <button class="chat-button" onclick="sendMessage()">Send</button>
@@ -551,25 +548,8 @@
 
     function startChat() {
         const messages = document.getElementById('chat-messages');
-        messages.innerHTML = `<p><strong>Hans Avatar:</strong> Welcome, ${userNickname}! I am Hans, your holographic guide. Let's get to know each other.</p>`;
+        messages.innerHTML = `<p><strong>Hans Avatar:</strong> Welcome, ${userNickname}! I am Hans, your holographic guide from the video. The digital veil has opened. Ready to explore?</p>`;
         chatStep = 1;
-        setTimeout(() => askQuestion(), 1000); // Start asking questions
-    }
-
-    function askQuestion() {
-        const messages = document.getElementById('chat-messages');
-        let question = '';
-        if (chatStep === 1) {
-            question = 'Do you like cats?';
-        } else if (chatStep === 2) {
-            question = 'Are you new to this Quest?';
-        } else if (chatStep === 3) {
-            question = 'Tea or Coffee?';
-        }
-        if (question) {
-            messages.innerHTML += `<p class="typing"><strong>Hans Avatar:</strong> ${question}</p>`;
-            messages.scrollTop = messages.scrollHeight;
-        }
     }
 
     function sendMessage() {
@@ -582,13 +562,16 @@
         
         // Simulate typing
         setTimeout(() => {
-            if (chatStep < 4) {
-                chatStep++;
-                askQuestion();
+            if (chatStep === 1) {
+                messages.innerHTML += `<p><strong>Hans Avatar:</strong> Great! What's your favorite month to glitch through?</p>`;
+                chatStep = 2;
+            } else if (chatStep === 2) {
+                messages.innerHTML += `<p><strong>Hans Avatar:</strong> Interesting choice, ${userNickname}. Ready for a game to test your digital wits? <a href="https://example.com/glitch-game" target="_blank" style="color: #007BA7;">Click here to enter the Glitch Maze!</a></p>`;
+                chatStep = 3;
             } else {
-                messages.innerHTML += `<p><strong>Hans Avatar:</strong> Thank you for participating in our quest, ${userNickname}! Use the calendar for your personal whims and tea events accordingly. Oh, and don't forget to subscribe to our YouTube channel if you truly resonate with what we're all about. Not sure? Click our About link at the bottom of the page. We'll meet you wherever you land. <a href="https://www.youtube.com/channel/YOUR_CHANNEL" target="_blank" style="color: #007BA7;">Subscribe Here</a></p>`;
-                messages.scrollTop = messages.scrollHeight;
+                messages.innerHTML += `<p><strong>Hans Avatar:</strong> Explore the calendar, ${userNickname}. The void awaits!</p>`;
             }
+            messages.scrollTop = messages.scrollHeight;
         }, 1000);
     }
 
@@ -766,9 +749,6 @@
     // Audio for drawer buttons: Hover preview, click full play + link
     const drawerButtons = document.querySelectorAll('.drawer-button');
     drawerButtons.forEach(button => {
-        const audioSrc = button.getAttribute('data-audio');
-        const audio = new Audio(audioSrc);
-        
         button.addEventListener('mouseenter', () => {
             audio.currentTime = 0; // Reset for hover
             audio.play().catch(e => console.log('Audio play failed:', e));
@@ -798,8 +778,9 @@
         isMuted = !isMuted;
         allAudios.forEach(audio => {
             if (audio) {
-                audio.muted = isMuted
-                        });
+                audio.muted = isMuted;
+            }
+        });
         if (currentAudio) currentAudio.muted = isMuted; // Include radio audio
         muteButton.textContent = isMuted ? 'Unmute All Audio' : 'Mute All Audio';
         muteButton.classList.toggle('muted', isMuted);
