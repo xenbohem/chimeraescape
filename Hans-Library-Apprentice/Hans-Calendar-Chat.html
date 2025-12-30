@@ -375,11 +375,30 @@ for (const key in teaSnobResponses) {
           }
         }
       }
+// short / quiet replies
+if (!reply && shortResponses[clean]) {
+  reply = shortResponses[clean];
+}
 
+// intent-based understanding
+if (!reply && /i like tea/i.test(clean)) {
+  reply = "A sensible preference. It suggests patience and a mild superiority."
+}
+
+if (!reply && /how are you/i.test(clean)) {
+  reply = "Functioning. Unlike over-steeped tea, I remain balanced. And you?"
+}
+
+if (!reply && /i'?m good/i.test(clean)) {
+  reply = "Good is sufficient. We don’t demand brilliance every day."
+}
+
+if (!reply && /can you help me/i.test(clean)) {
+  reply = "Of course. Tea guidance, emotional support, or quiet companionship?"
+}
       // Fallback Hans voice
       if (!reply) {
-        reply = "Hmm. An interesting sound. Elaborate, preferably with better tea."
-      }
+        reply = "Hmm. An interesting sound. Elaborate, preferably with better tea."      }
 
       messages.innerHTML += `<p><strong>Hans:</strong> ${reply}</p>`;
       messages.scrollTop = messages.scrollHeight;
