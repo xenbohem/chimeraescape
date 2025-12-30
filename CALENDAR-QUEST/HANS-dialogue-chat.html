@@ -471,6 +471,11 @@ function buildCalendar(year=2026, month=0) {
   for (let d=1; d<=days; d++) {
     const key = `${year}-${month+1}-${d}`;
     const cell = document.createElement("div");
+    const today = new Date();
+    
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
+
     cell.className = "calendar-day";
     cell.textContent = d;
     if (recipes[key]) cell.classList.add("has-recipe");
