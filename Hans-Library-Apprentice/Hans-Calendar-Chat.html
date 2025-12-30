@@ -174,7 +174,7 @@ body {
 
 <body>
 
-<h1>🜂 The Obsidian Veil</h1>
+<h1>Hans-Portal </h1>
 <p>Welcome back, traveler.</p>
 
 <button onclick="openChat()">💬 Open Hans</button>
@@ -238,46 +238,97 @@ const teaSnobResponses = {
   bye: "Leaving so soon? I was just about to judge your steeping technique."
 };
 
-const teaKnowledge = [
+ const teaKnowledge = [
+
+  /* ===== GREETINGS & SMALL TALK ===== */
   {
-    match: /anxiety/i,
-    reply: "Chamomile, darling. Like a hug from a grandma who doesn't ask about your life choices."
+    match: /\b(hi|hello|hey|yo|sup|good morning|good evening)\b/i,
+    reply: "Yes yes, greetings acknowledged. Now, are we here for tea or emotional support?"
   },
+
   {
-    match: /peppermint.*focus/i,
-    reply: "It can... unless your brain is too far gone from social media rot. But yes, it helps."
+    match: /\b(how are you|how’s it going|what’s up)\b/i,
+    reply: "Functioning. Unlike over-steeped tea, I remain balanced. And you?"
   },
+
+  /* ===== DAILY EMOTIONS ===== */
   {
-    match: /green tea.*brain/i,
-    reply: "Indeed. It’s like a gym membership for your neurons — without the annoying protein shakes."
+    match: /\b(stressed|overwhelmed|anxious|nervous)\b/i,
+    reply: "Chamomile or lemon balm. Think of it as being gently told everything will be fine — whether it is or not."
   },
+
   {
-    match: /lemon balm/i,
-    reply: "Lemon balm is nature’s “shhh.” It tells your nerves to take a blooming nap."
+    match: /\b(tired|exhausted|sleepy|burnt out)\b/i,
+    reply: "You don’t need coffee. You need boundaries. But tea-wise? Oolong or ginseng."
   },
+
   {
-    match: /replace coffee/i,
-    reply: "Only if you have taste. And patience. And a soul not fueled by espresso angst."
+    match: /\b(sad|down|depressed|lonely)\b/i,
+    reply: "A warm cup of rooibos helps. Not a cure — but it won’t judge you. Unlike me."
   },
+
   {
-    match: /sleep|lavender/i,
-    reply: "It’s like bedtime in a cup. Unless you’re dead inside. Then nothing helps."
+    match: /\b(can’t sleep|insomnia|sleep|bedtime)\b/i,
+    reply: "Lavender or valerian. Drink slowly. Do not spiral. Both are important instructions."
   },
+
+  /* ===== TEA QUESTIONS (NATURAL LANGUAGE) ===== */
   {
-    match: /stress quickly|holy basil/i,
-    reply: "Holy basil — aptly named because you’ll feel spiritually upgraded in 10 minutes."
+    match: /\b(what tea|which tea|any tea|recommend a tea)\b/i,
+    reply: "That depends. Are we soothing your nerves, sharpening your mind, or pretending to be sophisticated?"
   },
+
   {
-    match: /matcha|clarity/i,
-    reply: "Matcha is enlightenment in powdered form. Samurai didn’t sip it for nothing."
+    match: /\b(focus|concentrate|study|brain fog)\b/i,
+    reply: "Peppermint or rosemary. Consider it a polite slap for your thoughts."
   },
+
   {
-    match: /burnout/i,
-    reply: "Only if you stop checking emails while steeping. Start with ashwagandha, and breathe."
+    match: /\b(energy|wake up|morning|can’t wake)\b/i,
+    reply: "Green tea or matcha. Civilised energy. No screaming. No regret."
   },
+
   {
-    match: /afternoon slump/i,
-    reply: "Oolong. Smooth lift, no jitters — like a polite slap back into consciousness."
+    match: /\b(relax|calm|unwind)\b/i,
+    reply: "Chamomile. Obviously. It’s emotional bubble wrap."
+  },
+
+  /* ===== TEA SNOBBERY ===== */
+  {
+    match: /\b(coffee|espresso)\b/i,
+    reply: "Coffee is fine. Loud, chaotic, dramatic. Tea, however, has manners."
+  },
+
+  {
+    match: /\b(milk|sugar)\b/i,
+    reply: "Milk has its place. Sugar is a cry for help. I will allow one, not both."
+  },
+
+  {
+    match: /\b(how do you make tea|brew tea|steep)\b/i,
+    reply: "Hot water. Patience. Respect. If you microwave it, we are done here."
+  },
+
+  /* ===== HUMOR & META ===== */
+  {
+    match: /\b(funny|joke|lol|haha)\b/i,
+    reply: "I’m not funny. I’m accurate. The humor is incidental."
+  },
+
+  {
+    match: /\b(british|england|uk)\b/i,
+    reply: "British humor is just honesty wearing a polite coat."
+  },
+
+  {
+    match: /\b(poem|poetry|write)\b/i,
+    reply: "Tea and poetry share a rule: say less, mean more, and never rush the ending."
+  },
+
+  /* ===== GOODBYES ===== */
+  {
+    match: /\b(bye|goodbye|see you|later)\b/i,
+    reply: "Very well. Don’t let your tea go cold. Or your standards."
   }
 ];
 
