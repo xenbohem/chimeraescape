@@ -247,6 +247,16 @@ const teaSnobResponses = {
   maybe: "Indecision? You must drink a lot of lukewarm tea.",
   bye: "Leaving so soon? I was just about to judge your steeping technique."
 };
+  const hansDefaultReflections = [
+  "I have lived three centuries and yet people still ask for instant answers. Tea, at least, understands patience.",
+  "In my darker years I drank blood. Now I drink tea. One improves the soul considerably.",
+  "British manners were invented to stop us saying what we really think. Tea helps with the rest.",
+  "I do not sleep much. Immortality does that. A good oolong makes it tolerable.",
+  "Faith teaches restraint. Tea teaches timing. Both are easily ruined by impatience.",
+  "You needn’t perform for me. Silence and a warm cup are already a conversation.",
+  "Once I feared sunlight. Now I merely avoid bad tea. Growth takes many forms."
+];
+
 
  const teaKnowledge = [
 
@@ -341,7 +351,6 @@ const teaSnobResponses = {
     reply: "Very well. Don’t let your tea go cold. Or your standards."
   }
 ];
-
 input.addEventListener("keydown", e => {
   if (e.key === "Enter" && input.value.trim()) {
     const userText = input.value.trim();
@@ -398,8 +407,10 @@ if (!reply && /can you help me/i.test(clean)) {
 }
       // Fallback Hans voice
       if (!reply) {
-        reply = "Hmm. An interesting sound. Elaborate, preferably with better tea."      }
-
+  reply = hansDefaultReflections[
+    Math.floor(Math.random() * hansDefaultReflections.length)
+  ];
+}
       messages.innerHTML += `<p><strong>Hans:</strong> ${reply}</p>`;
       messages.scrollTop = messages.scrollHeight;
     }, 900);
