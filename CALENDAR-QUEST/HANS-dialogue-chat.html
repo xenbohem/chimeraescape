@@ -365,6 +365,16 @@ input.addEventListener("keydown", e => {
 
       let reply = null;
 let hansReflectionPool = [];
+      function getHansReflection() {
+  if (hansReflectionPool.length === 0) {
+    // refill & shuffle
+    hansReflectionPool = [...hansDefaultReflections]
+      .sort(() => Math.random() - 0.5);
+  }
+
+  return hansReflectionPool.pop();
+}
+
    // normalize input
 const clean = lower.replace(/[^\w\s]/g, "");
 
