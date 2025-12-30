@@ -223,6 +223,32 @@ function closeChat() {
     sessionStorage.setItem("chatOpen", "false");
   }, 600);
 }
+  function sendMessage() {
+  const userText = userInput.value;
+  if (!userText) return;
+
+  addMessage("You", userText);
+  userInput.value = "";
+
+  // Add typing indicator
+  const typingIndicator = document.createElement("p");
+  typingIndicator.id = "typingIndicator";
+  typingIndicator.innerHTML = `<em>Hans is thinking…</em>`;
+  messages.appendChild(typingIndicator);
+  messages.scrollTop = messages.scrollHeight;
+
+  // Simulate thinking delay
+  setTimeout(() => {
+    const reply = generateReply(userText);
+    
+    // Remove typing indicator
+    const indicator = document.getElementById("typingIndicator");
+    if (indicator) indicator.remove();
+
+    addMessage("Hans", reply);
+  }, 1200); // Slightly longer delay to simulate thinking
+}
+
 function greet() {
   messages.innerHTML =
     "<p><strong>Hans:</strong> Ah. You’ve returned. Speak carefully — today I’m feeling judgmental about tea.</p>";
