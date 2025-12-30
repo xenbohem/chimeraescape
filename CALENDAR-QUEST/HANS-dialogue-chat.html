@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Obsidian Veil — Glitch Kitchen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+:root {
+  --veil-black: #050008;
+  --indigo: #3f2fb5;
+  --cornflower: #6495ed;
+}
+
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+  padding: 30px;
+  background: radial-gradient(circle at top, #12001f, #000);
+  color: #e6e6ff;
+  font-family: monospace;
+}
+
+/* ===== CHATBOT ===== */
+.chatbot {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 320px;
+  background: rgba(5, 0, 8, 0.95);
+  border: 2px solid var(--indigo);
+  border-radius: 10px;
+  box-shadow: 0 0 40px rgba(100,149,237,0.6);
+  padding: 20px;
+  display: none;
+  z-index: 1000;
+}
+
+.chatbot.open {
+  display: block;
+}
+
+.chatbot.closing {
+  animation: glitchFadeOut 0.6s ease forwards;
+}
+
+@keyframes glitchFadeOut {
+  0% { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  40% { opacity:.7; filter:blur(1px) hue-rotate(40deg); }
+  70% { opacity:.4; filter:blur(3px) contrast(140%); }
+  100% { opacity:0; filter:blur(6px); transform:translate(-50%,-50%) scale(.9); }
+}
+
+.chat-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #c7c3ff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.chat-messages {
+  height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--indigo);
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #000;
+}
+
+.chat-input {
+  width: 100%;
+  padding: 8px;
+  background: black;
+  color: #e6e6ff;
+  border: 1px solid var(--indigo);
+}
+
+.typing {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* ===== CALENDAR ===== */
+#glitch-kitchen {
+  margin-top: 80px;
+  text-align: center;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  max-width: 700px;
+  margin: 20px auto;
+}
+
+.calendar-day {
+  background: rgba(20,10,40,0.9);
+  border: 1px solid var(--indigo);
+  padding: 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+.calendar-day:hover {
+  box-shadow: 0 0 15px rgba(100,149,237,0.8);
+}
+
+.calendar-day.has-recipe::after {
+  content: "✦";
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  color: var(--cornflower);
+}
+
+/* ===== RECIPE MODAL ===== */
+.recipe-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(4px);
+  display: none;
+  z-index: 2000;
+}
+
+.recipe-modal.open {
+  display: block;
+}
+
+.recipe-window {
+  width: 420px;
+  margin: 10% auto;
+  background: rgba(10,5,25,.95);
+  border: 2px solid var(--indigo);
+  box-shadow: 0 0 40px rgba(100,149,237,.6);
+  padding: 20px;
+  position: relative;
+}
+
+.recipe-window input,
+.recipe-window textarea {
+  width: 100%;
+  margin-top: 10px;
+  background: black;
+  color: #e6e6ff;
+  border: 1px solid var(--indigo);
+  padding: 8px;
+  font-family: monospace;
+}
+
+.recipe-window textarea {
+  min-height: 120px;
+}
+
+.recipe-close {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #c7c3ff;
+  font-size: 18px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Hans-Portal </h1>
+<p>Welcome back, traveler.</p>
+
+<button onclick="openChat()">💬 Open Hans</button>
+
+<!-- CHAT -->
+<div class="chatbot" id="chatbot">
+  <button class="chat-close" onclick="closeChat()">✕</button>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="typing" id="typing" style="display:none;">Hans is thinking…</div>
+  <input class="chat-input" id="chatInput" placeholder="Speak…" />
+</div>
+
+<!-- CALENDAR -->
+<section id="glitch-kitchen">
+  <h2>🍲 The Glitch Kitchen</h2>
+  <div id="calendar" class="calendar-grid"></div>
+</section>
+
+<!-- RECIPE MODAL -->
+<div class="recipe-modal" id="recipeModal">
+  <div class="recipe-window">
+    <button class="recipe-close" onclick="closeRecipe()">✕</button>
+    <h3 id="recipeDate"></h3>
+    <input id="recipeTitle" placeholder="Recipe title…" />
+    <textarea id="recipeBody"></textarea>
+  </div>
+</div>
+
+<script>
+/* ===== CHAT ===== */
+const chat = document.getElementById("chatbot");
+const messages = document.getElementById("chatMessages");
+const input = document.getElementById("chatInput");
+const typing = document.getElementById("typing");
+
+function openChat() {
+  chat.classList.add("open");
+  sessionStorage.setItem("chatOpen", "true");
+  if (!messages.innerHTML) greet();
+}
+
+function closeChat() {
+  chat.classList.add("closing");
+  setTimeout(() => {
+    chat.classList.remove("open", "closing");
+    sessionStorage.setItem("chatOpen", "false");
+  }, 600);
+}
+function greet() {
+  messages.innerHTML =
+    "<p><strong>Hans:</strong> Ah. You’ve returned. Speak carefully — today I’m feeling judgmental about tea.</p>";
+}
+const shortResponses = {
+  oh: "Quite. It tends to sneak up on people.",
+  ok: "Acceptance is an underrated virtue.",
+  okay: "Good. We can work with that.",
+  hmm: "Thinking is allowed here. Encouraged, even.",
+  probably: "A cautious answer. Very tea-drinker of you.",
+  yes: "Confidence! Or at least the illusion of it.",
+  good: "Glad to hear it. No notes.",
+  tea: "Ah. Then you are among friends.",
+  coffee: "Coffee is fine. Loud, chaotic, dramatic. Tea, however, has manners."
+};
+const teaSnobResponses = {
+  hi: "Oh splendid, another human. Do state your business, preferably over a cuppa.",
+  hello: "Yes, yes, hello. Shall we discuss tea or continue wasting time?",
+  yes: "Finally, some agreement. I feared we'd be here debating water temperature.",
+  no: "Ah, the spirit of rebellion. Careful, or I’ll brew you chamomile and call it justice.",
+  funny: "I’m a bot, not a clown. But if tea puns thrill you, steep right in.",
+  maybe: "Indecision? You must drink a lot of lukewarm tea.",
+  bye: "Leaving so soon? I was just about to judge your steeping technique."
+};
+
+ const teaKnowledge = [
+
+  /* ===== GREETINGS & SMALL TALK ===== */
+  {
+    match: /\b(hi|hello|hey|yo|sup|good morning|good evening)\b/i,
+    reply: "Yes yes, greetings acknowledged. Now, are we here for tea or emotional support?"
+  },
+
+  {
+    match: /\b(how are you|how’s it going|what’s up)\b/i,
+    reply: "Functioning. Unlike over-steeped tea, I remain balanced. And you?"
+  },
+
+  /* ===== DAILY EMOTIONS ===== */
+  {
+    match: /\b(stressed|overwhelmed|anxious|nervous)\b/i,
+    reply: "Chamomile or lemon balm. Think of it as being gently told everything will be fine — whether it is or not."
+  },
+
+  {
+    match: /\b(tired|exhausted|sleepy|burnt out)\b/i,
+    reply: "You don’t need coffee. You need boundaries. But tea-wise? Oolong or ginseng."
+  },
+
+  {
+    match: /\b(sad|down|depressed|lonely)\b/i,
+    reply: "A warm cup of rooibos helps. Not a cure — but it won’t judge you. Unlike me."
+  },
+
+  {
+    match: /\b(can’t sleep|insomnia|sleep|bedtime)\b/i,
+    reply: "Lavender or valerian. Drink slowly. Do not spiral. Both are important instructions."
+  },
+
+  /* ===== TEA QUESTIONS (NATURAL LANGUAGE) ===== */
+  {
+    match: /\b(what tea|which tea|any tea|recommend a tea)\b/i,
+    reply: "That depends. Are we soothing your nerves, sharpening your mind, or pretending to be sophisticated?"
+  },
+
+  {
+    match: /\b(focus|concentrate|study|brain fog)\b/i,
+    reply: "Peppermint or rosemary. Consider it a polite slap for your thoughts."
+  },
+
+  {
+    match: /\b(energy|wake up|morning|can’t wake)\b/i,
+    reply: "Green tea or matcha. Civilised energy. No screaming. No regret."
+  },
+
+  {
+    match: /\b(relax|calm|unwind)\b/i,
+    reply: "Chamomile. Obviously. It’s emotional bubble wrap."
+  },
+
+  /* ===== TEA SNOBBERY ===== */
+  {
+    match: /\b(coffee|espresso)\b/i,
+    reply: "Coffee is fine. Loud, chaotic, dramatic. Tea, however, has manners."
+  },
+
+  {
+    match: /\b(milk|sugar)\b/i,
+    reply: "Milk has its place. Sugar is a cry for help. I will allow one, not both."
+  },
+
+  {
+    match: /\b(how do you make tea|brew tea|steep)\b/i,
+    reply: "Hot water. Patience. Respect. If you microwave it, we are done here."
+  },
+
+  /* ===== HUMOR & META ===== */
+  {
+    match: /\b(funny|joke|lol|haha)\b/i,
+    reply: "I’m not funny. I’m accurate. The humor is incidental."
+  },
+
+  {
+    match: /\b(british|england|uk)\b/i,
+    reply: "British humor is just honesty wearing a polite coat."
+  },
+
+  {
+    match: /\b(poem|poetry|write)\b/i,
+    reply: "Tea and poetry share a rule: say less, mean more, and never rush the ending."
+  },
+
+  /* ===== GOODBYES ===== */
+  {
+    match: /\b(bye|goodbye|see you|later)\b/i,
+    reply: "Very well. Don’t let your tea go cold. Or your standards."
+  }
+];
+
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter" && input.value.trim()) {
+    const userText = input.value.trim();
+    const lower = userText.toLowerCase();
+
+    messages.innerHTML += `<p><strong>You:</strong> ${userText}</p>`;
+    input.value = "";
+    typing.style.display = "block";
+
+    setTimeout(() => {
+      typing.style.display = "none";
+
+      let reply = null;
+
+   // normalize input
+const clean = lower.replace(/[^\w\s]/g, "");
+
+// snarky trigger scan
+for (const key in teaSnobResponses) {
+  if (clean === key || clean.startsWith(key) || clean.includes(` ${key}`)) {
+    reply = teaSnobResponses[key];
+    break;
+  }
+}
+      // Tea knowledge scan
+      if (!reply) {
+        for (const item of teaKnowledge) {
+          if (item.match.test(lower)) {
+            reply = item.reply;
+            break;
+          }
+        }
+      }
+// short / quiet replies
+if (!reply && shortResponses[clean]) {
+  reply = shortResponses[clean];
+}
+
+// intent-based understanding
+if (!reply && /i like tea/i.test(clean)) {
+  reply = "A sensible preference. It suggests patience and a mild superiority."
+}
+
+if (!reply && /how are you/i.test(clean)) {
+  reply = "Functioning. Unlike over-steeped tea, I remain balanced. And you?"
+}
+
+if (!reply && /i'?m good/i.test(clean)) {
+  reply = "Good is sufficient. We don’t demand brilliance every day."
+}
+
+if (!reply && /can you help me/i.test(clean)) {
+  reply = "Of course. Tea guidance, emotional support, or quiet companionship?"
+}
+      // Fallback Hans voice
+      if (!reply) {
+        reply = "Hmm. An interesting sound. Elaborate, preferably with better tea."      }
+
+      messages.innerHTML += `<p><strong>Hans:</strong> ${reply}</p>`;
+      messages.scrollTop = messages.scrollHeight;
+    }, 900);
+  }
+});
+
+if (sessionStorage.getItem("chatOpen") === "true") openChat();
+
+/* ===== CALENDAR ===== */
+const calendar = document.getElementById("calendar");
+const modal = document.getElementById("recipeModal");
+const rDate = document.getElementById("recipeDate");
+const rTitle = document.getElementById("recipeTitle");
+const rBody = document.getElementById("recipeBody");
+
+let recipes = JSON.parse(localStorage.getItem("recipes") || "{}");
+let activeKey = null;
+
+function buildCalendar(year=2026, month=0) {
+  calendar.innerHTML = "";
+  const days = new Date(year, month+1, 0).getDate();
+  for (let d=1; d<=days; d++) {
+    const key = `${year}-${month+1}-${d}`;
+    const cell = document.createElement("div");
+    cell.className = "calendar-day";
+    cell.textContent = d;
+    if (recipes[key]) cell.classList.add("has-recipe");
+    cell.onclick = () => openRecipe(key);
+    calendar.appendChild(cell);
+  }
+}
+
+function openRecipe(key) {
+  activeKey = key;
+  const r = recipes[key] || {
+    title: "Unnamed Ritual",
+    body: "Combine static, memory fragments, and heat until time bends."
+  };
+  rDate.textContent = key;
+  rTitle.value = r.title;
+  rBody.value = r.body;
+  modal.classList.add("open");
+}
+
+function closeRecipe() {
+  if (activeKey) {
+    recipes[activeKey] = { title: rTitle.value, body: rBody.value };
+    localStorage.setItem("recipes", JSON.stringify(recipes));
+  }
+  modal.classList.remove("open");
+  buildCalendar();
+}
+
+buildCalendar();
+</script>
+
+</body>
+</html>
