@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hans — Tea, Time, & Judgment</title>
+
+<style>
+:root {
+  --veil-black: #050008;
+  --indigo: #3f2fb5;
+  --cornflower: #6495ed;
+}
+
+body {
+  background: radial-gradient(circle at top, #0b0015, #000);
+  color: #e6e6ff;
+  font-family: Georgia, serif;
+  margin: 0;
+  padding: 20px;
+}
+
+/* =========================
+   CHATBOT CSS
+========================= */
+.chatbot {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    background: rgba(5, 0, 8, 0.95);
+    border: 2px solid #3f2fb5;
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgba(100,149,237,0.6);
+    display: none;
+    z-index: 1000;
+    padding: 20px;
+    color: #c7c3ff;
+    font-family: Arial, sans-serif;
+}
+
+.chatbot-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.chatbot-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid #3f2fb5;
+}
+
+.chat-messages {
+    height: 240px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    background: rgba(10,10,15,0.2);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.chat-messages p {
+    margin: 5px 0;
+}
+
+.chat-messages p strong {
+    display: inline-block;
+}
+
+.chat-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: transparent;
+    color: #c7c3ff;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 2000;
+    pointer-events: auto;
+    text-shadow:
+        0 0 6px rgba(100,149,237,0.8),
+        0 0 14px rgba(63,47,181,0.6);
+}
+
+.chat-close:hover {
+    color: #ffffff;
+    text-shadow:
+        0 0 10px rgba(100,149,237,1),
+        0 0 25px rgba(100,149,237,0.9);
+}
+
+@keyframes glitchFadeOut {
+    0% { opacity: 1; filter: none; transform: translate(-50%, -50%) scale(1);}
+    40% { opacity: 0.7; filter: blur(1px) hue-rotate(40deg); transform: translate(-49%, -50%) scale(1.02);}
+    70% { opacity: 0.4; filter: blur(3px) contrast(140%); transform: translate(-51%, -50%) scale(0.98);}
+    100% { opacity: 0; filter: blur(6px); transform: translate(-50%, -50%) scale(0.9);}
+}
+
+.chatbot.closing {
+    animation: glitchFadeOut 0.6s ease forwards;
+}
+
+/* =========================
+   CALENDAR
+========================= */
+.month {
+  max-width:900px;
+  margin:30px auto;
+  background:rgba(10,0,20,.85);
+  border:2px solid var(--indigo);
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 0 40px rgba(100,149,237,.4);
+}
+
+.calendar-grid {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+}
+
+.day {
+  min-height:90px;
+  padding:8px;
+  border:1px solid var(--indigo);
+  background:#050008;
+  box-shadow:inset 0 0 12px rgba(100,149,237,.35);
+  font-size:.85em;
+}
+
+.day.today {
+  outline:2px solid var(--cornflower);
+  box-shadow:
+    inset 0 0 18px rgba(100,149,237,.7),
+    0 0 18px rgba(100,149,237,.6);
+}
+
+.recipe summary {
+  cursor:pointer;
+  color:var(--cornflower);
+
+}
+</style>
+</head>
+<body>
+
+<button onclick="openChat()">Speak to Hans</button>
+
+<div id="calendar"></div>
+
+<!-- CHAT -->
+<!-- =========================
+     CHATBOT HTML
+========================= -->
+<div id="chatbot" class="chatbot">
+  <button class="chat-close" onclick="closeChat()">✖</button>
+
+  <div class="chatbot-header">
+    <img src="hans-avatar.png" alt="Hans Avatar" class="chatbot-avatar">
+    <h3>Hans</h3>
+  </div>
+
+  <div id="messages" class="chat-messages"></div>
+
+  <input type="text" id="userInput" placeholder="Type something...">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<button id="chat-toggle" onclick="openChat()">Chat with Hans</button>
+
+<script>
+// =========================
+// CHATBOT JS
+// =========================
+const hansDefaultReflections = [
+  "Hmm. An interesting sound. Elaborate, preferably with better tea.",
+  "British manners were invented to stop us saying what we really think. Tea helps with the rest.",
+  "Tea snobbery is not a hobby; it’s a calling.",
+  "A cup of tea a day keeps bad manners at bay.",
+  "Even a vampire knows that tea etiquette is eternal.",
+  "You may speak, but I judge silently. And steep sharply.",
+  "Over-steeped tea is a metaphor for life. Beware."
+];
+
+const messages = document.getElementById("messages");
+const input = document.getElementById("userInput");
+let hansReflectionPool = [...hansDefaultReflections];
+
+function openChat() {
+  document.getElementById("chatbot").style.display = "block";
+  sessionStorage.setItem("chatOpen", "true");
+}
+
+function closeChat() {
+  const chatBox = document.getElementById("chatbot");
+  chatBox.classList.add("closing");
+  setTimeout(() => {
+    chatBox.style.display = "none";
+    chatBox.classList.remove("closing");
+  }, 600);
+  sessionStorage.setItem("chatOpen", "false");
+}
+
+if (sessionStorage.getItem("chatOpen") === "true") openChat();
+
+// =========================
+// Sending a message
+// =========================
+function sendMessage() {
+  const userText = input.value.trim();
+  if (!userText) return;
+
+  messages.innerHTML += `<p><strong>You:</strong> ${userText}</p>`;
+  input.value = "";
+  messages.scrollTop = messages.scrollHeight;
+
+  // Hans responds after a short delay
+  setTimeout(() => {
+    let reply = generateHansReply(userText);
+    messages.innerHTML += `<p><img src="hans-avatar.png" class="chatbot-avatar" style="width:25px; height:25px; vertical-align:middle;"> <strong>Hans:</strong> ${reply}</p>`;
+    messages.scrollTop = messages.scrollHeight;
+  }, 900);
+}
+
+// =========================
+// Hans AI reply generator
+// =========================
+function generateHansReply(text) {
+  text = text.toLowerCase();
+
+  // Common keyword replies
+  if (/hi|hello|hey/.test(text)) return "Oh splendid, another human. Do state your business, preferably over a cuppa.";
+  if (/tea/.test(text)) return "Tea, yes. Loud, chaotic, dramatic. But manners, always manners.";
+  if (/coffee/.test(text)) return "Coffee is acceptable, but hardly refined. Tea is better.";
+  if (/how are you|how's it going/.test(text)) return "Functioning. Unlike over-steeped tea, I remain balanced. And you?";
+  if (/good|fine|well/.test(text)) return "Hmm. An interesting sound. Elaborate, preferably with better tea.";
+  if (/bye|goodbye/.test(text)) return "Leaving so soon? I was just about to judge your steeping technique.";
+
+  // Random default reflection
+  return hansDefaultReflections[Math.floor(Math.random() * hansDefaultReflections.length)];
+}
+
+/* =========================
+   CALENDAR LOGIC
+========================= */
+const today = new Date();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
+
+const recipes = {
+  1: "Ceremonial Reset Tea — judge your past gently.",
+  7: "Midweek Perseverance Blend.",
+  14: "Romantic Delusion Infusion.",
+  21: "Existential Earl Grey.",
+  28: "End-of-Month Forgiveness Brew."
+};
+
+function renderCalendar() {
+  const days = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const start = new Date(currentYear, currentMonth, 1).getDay();
+
+  let html = `<h2>${today.toLocaleString('default',{month:'long'})} ${currentYear}</h2>`;
+  html += `<div class="calendar-grid">`;
+
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d =>
+    html += `<div class="day"><strong>${d}</strong></div>`
+  );
+
+  for (let i = 0; i < start; i++) html += `<div class="day"></div>`;
+
+  for (let d = 1; d <= days; d++) {
+    const isToday =
+      d === today.getDate() &&
+      currentMonth === today.getMonth() &&
+      currentYear === today.getFullYear();
+
+    const key = `recipe-${currentYear}-${currentMonth}-${d}`;
+    const saved = localStorage.getItem(key);
+    const text = saved || recipes[d];
+
+    html += `<div class="day ${isToday?'today':''}">
+      <strong>${d}</strong>`;
+
+    if (text) {
+      html += `
+        <details class="recipe">
+          <summary>Tea Ritual</summary>
+          <textarea class="recipe-editor" data-key="${key}">${text}</textarea>
+          <button type="button" onclick="saveRecipe(this)">Save Ritual</button>
+        </details>`;
+    }
+
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById("calendar").innerHTML = html;
+  
+}
+function saveRecipe(btn) {
+  const textarea = btn.closest(".recipe").querySelector("textarea");
+  const key = textarea.dataset.key;
+  const value = textarea.value.trim();
+
+  if (!key) return;
+
+  try {
+    localStorage.setItem(key, value);
+    console.log(`Saved ${key}: ${value}`);
+
+    btn.textContent = "Saved ✓";
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = "Save Ritual";
+      btn.disabled = false;
+    }, 1200);
+
+    // Hans commentary
+    const remark = hansRecipeRemarks[Math.floor(Math.random() * hansRecipeRemarks.length)];
+    const messages = document.getElementById("messages");
+    if (messages) messages.innerHTML += `<p><strong>Hans:</strong> ${remark}</p>`;
+    if (messages) messages.scrollTop = messages.scrollHeight;
+
+  } catch (e) {
+    alert("Cannot save recipe! Local storage may be blocked.");
+    console.error(e);
+  }
+}
+
+renderCalendar();
+</script>
+</body>
