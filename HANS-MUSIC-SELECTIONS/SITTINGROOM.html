@@ -113,6 +113,14 @@ button:hover { box-shadow: 0 0 14px var(--cornflower); }
   animation: reveal 2.5s ease forwards;
   margin-bottom: 14px;
 }
+.manuscript {
+  pointer-events: none; /* allows interaction underneath */
+}
+
+.manuscript-inner {
+  pointer-events: auto; /* but content itself can be clicked */
+  position: relative;
+}
 
 @keyframes reveal {
   to { opacity: 1; }
