@@ -1,16 +1,16 @@
- <!DOCTYPE html> 
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Hans’ Library</title>
+<title>Hans’ Listening Room</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 :root {
   --bg-indigo: #0f0b24;
-  --panel-purple: rgba(60, 40, 110, 0.45);
+  --panel-purple: rgba(60,40,110,0.45);
   --lavender: #e7dcff;
-  --violet-glow: rgba(190, 140, 255, 0.6);
+  --cornflower: rgba(100,149,237,0.6);
 }
 
 * { box-sizing: border-box; }
@@ -19,429 +19,290 @@ body {
   margin: 0;
   background: radial-gradient(circle at top, #1b1440, var(--bg-indigo));
   color: var(--lavender);
-  font-family: "Georgia", serif;
+  font-family: Georgia, serif;
   height: 100vh;
   overflow: hidden;
 }
 
 /* Layout */
-.app-shell {
+.app {
   display: grid;
   grid-template-columns: 260px 1fr 300px;
   height: 100%;
 }
 
-/* Drawers */
 .drawer {
   padding: 20px;
   background: var(--panel-purple);
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow: inset 0 0 40px rgba(255,255,255,0.05),
-              0 0 30px rgba(120,90,255,0.25);
 }
 
-/* Titles */
-.drawer-left h3, .drawer-right h3 {
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-size: 12px;
-  opacity: 0.8;
-}
-
-/* Library Buttons */
-.book-category {
-  display: block;
+/* Buttons */
+button {
   width: 100%;
-  margin-top: 14px;
+  margin-top: 12px;
   padding: 10px;
   border-radius: 14px;
   border: none;
-  background: rgba(180,150,255,0.15);
+  background: rgba(180,150,255,0.2);
   color: var(--lavender);
   cursor: pointer;
-  backdrop-filter: blur(6px);
+}
+button:hover { box-shadow: 0 0 14px var(--cornflower); }
+
+/* Center */
+.center {
+  padding: 40px;
 }
 
-.book-category:hover {
-  box-shadow: 0 0 12px var(--violet-glow);
-}
-
-/* Reading Room */
-.reading-room {
-  padding: 48px;
-  overflow-y: auto;
-}
-.reading-room h1 { font-weight: normal; }
-
-/* Listening Room */
+/* Listening */
 .now-listening {
-  margin-top:20px;
-  padding:14px;
-  border-radius:16px;
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 16px;
   background: rgba(100,80,160,0.25);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 0 18px var(--violet-glow);
+  box-shadow: 0 0 12px rgba(160,130,255,0.3);
   transition: box-shadow 0.1s ease;
 }
-#trackTitle { display: block; font-size: 14px; }
-.hans-note { font-size: 13px; opacity: 0.75; margin-top: 6px; }
-.hans-button {
-  margin-top: 18px;
-  width: 100%;
-  padding: 12px;
-  border-radius: 16px;
-  border: none;
-  background: rgba(200,170,255,0.2);
-  color: white;
-  cursor: pointer;
-}
-.hans-button:hover { box-shadow: 0 0 20px var(--violet-glow); }
 
-/* Center Video Reveal */
-.video-reveal {
+/* Video */
+.video {
   position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60%; max-width: 800px;
-  border-radius: 20px;
-  overflow: hidden;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 0 40px rgba(190,140,255,0.5);
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(10,10,30,0.6);
+  backdrop-filter: blur(18px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.8s ease;
   z-index: 1000;
 }
-.video-reveal.active { opacity: 1; pointer-events: auto; }
-.video-reveal video { width: 100%; height: auto; display: block; }
-.close-video {
-  position: absolute; top: 12px; right: 12px;
-  background: rgba(200,170,255,0.3);
-  border: none; border-radius: 12px;
-  color: #fff; font-size: 18px; cursor: pointer;
+.video.active { opacity: 1; pointer-events: auto; }
+.video video {
+  width: 70%;
+  border-radius: 20px;
 }
 
-/* Marginalia */
-.marginalia { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events: none; overflow: hidden; z-index:900; }
-.marginalia-note {
-  position: absolute;
-  font-family: "Georgia", serif;
-  color: #e7dcff;
-  font-size: 14px;
-  opacity: 0.85;
-  white-space: nowrap;
-  pointer-events: none;
-  animation: floatNote 12s linear forwards;
-}
-@keyframes floatNote {
-  0% { transform: translateY(100vh) rotate(-5deg); opacity:0; }
-  20% { opacity:0.8; }
-  80% { opacity:0.8; }
-  100% { transform: translateY(-50px) rotate(5deg); opacity:0; }
-}
-.marginalia-input {
-  position: fixed; bottom:24px; left:50%; transform:translateX(-50%);
-  display:flex; gap:8px; z-index:950;
-}
-.marginalia-input input {
-  padding:8px 12px; border-radius:12px; border:none;
-  width:220px;
-  backdrop-filter: blur(6px);
-  background: rgba(100,80,160,0.25);
-  color: #e7dcff;
-}
-.marginalia-input button {
-  padding:8px 12px; border-radius:12px; border:none;
-  background: rgba(200,170,255,0.3);
-  color: #fff; cursor:pointer;
-}
- .manuscript {
+/* Manuscript */
+.manuscript {
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: center;
   justify-content: center;
-  pointer-events: none;
+  align-items: center;
   opacity: 0;
-  transition: opacity 1.2s ease;
+  pointer-events: none;
+  transition: opacity 1s ease;
   z-index: 1100;
 }
-
-.manuscript.active {
-  opacity: 1;
-}
+.manuscript.active { opacity: 1; }
 
 .manuscript-inner {
   max-width: 520px;
-  padding: 36px 42px;
-  background: rgba(20, 15, 40, 0.55);
+  padding: 36px;
+  background: rgba(20,15,40,0.55);
   backdrop-filter: blur(22px);
   border-radius: 22px;
-  box-shadow:
-    0 0 40px rgba(100,149,237,0.25),
-    inset 0 0 30px rgba(255,255,255,0.04);
-  font-family: "Georgia", serif;
-  font-size: 16px;
   line-height: 1.8;
-  color: #e7dcff;
 }
 
 .manuscript-line {
   opacity: 0;
-  transform: translateY(8px);
-  animation: revealLine 2.4s ease forwards;
+  animation: reveal 2.5s ease forwards;
   margin-bottom: 14px;
 }
 
-@keyframes revealLine {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes reveal {
+  to { opacity: 1; }
+}
 
-/* Mobile */
-@media (max-width: 900px) {
-  .app-shell { grid-template-columns:1fr; }
-  .drawer { display:none; }
+/* Marginalia */
+.marginalia-note {
+  position: absolute;
+  color: var(--lavender);
+  animation: float 12s linear forwards;
+}
+
+@keyframes float {
+  from { transform: translateY(100vh); opacity: 0; }
+  20% { opacity: .8; }
+  to { transform: translateY(-40px); opacity: 0; }
+}
+
+.marginalia-input {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 1200;
 }
 </style>
 </head>
 
 <body>
-<div class="app-shell">
 
-  <!-- Library -->
-  <aside class="drawer drawer-left">
+<div class="app">
+  <aside class="drawer">
     <h3>Library</h3>
-    <button class="book-category" data-mood="winter">Gothic & Winter</button>
-    <button class="book-category" data-mood="Noon">Noon Tea</button>
-    <button class="book-category" data-mood="evening">Cozy Fantasy</button>
-    <button class="book-category" data-mood="quiet">Poetry & Reflection</button>
+    <button data-mood="winter">Winter Hans</button>
+    <button data-mood="winterInstrumental">Instrumental</button>
   </aside>
 
-  <!-- Main Reading Area -->
-  <main class="reading-room">
-    <h1>The Library</h1>
-    <p>Shelves rest in violet shadow. Hans does not rush you.</p>
+  <main class="center">
+    <h1>The Listening Room</h1>
+    <p>Hans prefers restraint.</p>
   </main>
 
-  <!-- Listening Room -->
-  <aside class="drawer drawer-right">
+  <aside class="drawer">
     <h3>Listening</h3>
-    <div class="now-listening">
-      <span id="trackTitle">Winter Hans — Steeped in Snow</span>
-      <span id="hansNote" class="hans-note"></span>
+    <div class="now-listening" id="glow">
+      <div id="trackTitle"></div>
+      <div id="hansNote"></div>
     </div>
-    <button id="instrumentalToggle" class="hans-button">
-  🎼 Instrumental
-</button>
-    <button id="hansToggle" class="hans-button">☕ Begin</button>
-    <audio id="hansAudio" loop></audio>
+    <button id="playBtn">☕ Begin</button>
   </aside>
-
 </div>
 
-<!-- Center Video Reveal -->
-<div id="videoReveal" class="video-reveal">
-  <video id="ambientVideo" autoplay muted loop></video>
-  <button id="closeVideo" class="close-video">✕</button>
+<!-- Video -->
+<div class="video" id="video">
+  <video id="videoEl" loop muted autoplay></video>
 </div>
-<div id="manuscript" class="manuscript">
+
+<!-- Manuscript -->
+<div class="manuscript" id="manuscript">
   <div class="manuscript-inner" id="manuscriptText"></div>
 </div>
- <!-- Marginalia -->
-<div id="marginalia" class="marginalia"></div>
+
+<!-- Marginalia -->
 <div class="marginalia-input">
-  <input type="text" id="noteInput" placeholder="Leave a thought..." maxlength="100" />
-  <button id="submitNote">✎</button>
+  <input id="noteInput" placeholder="Leave a thought…" />
+  <button id="noteBtn">✎</button>
 </div>
 
+<audio id="audio"></audio>
+
 <script>
-// Audio & Hans responses
-const audio = document.getElementById("hansAudio");
-const toggle = document.getElementById("hansToggle");
-const trackTitle = document.getElementById("trackTitle");
-const hansNote = document.getElementById("hansNote");
-
-let listening = false;
-let currentMood = "winter";
-
+/* DATA */
 const tracks = {
   winter: {
-    title: "Winter Hans — Steeped in Snow",
-    file: "https://xenbohem.github.io/chimeraescape/audio/Hans-Songs/Lent-3.mp3",
-    video: "videos/winter.mp4",
-    responses: ["This one prefers patience.", "Winter does not like to be rushed.", "Yes… this will do."]
-  },
-   noon: {
-    title: "Noon Tea",
-    file: "Unchained-Hans.mp3",
-    video: "video1.mp4",
-    responses: ["A Nostalgic Moment with Yeshua."]
-  },
-  evening: {
-    title: "Evening Service",
-    file: "https://xenbohem.github.io/chimeraescape/audio/Hans-Songs/Properly-Steeped-Hanz.mp3",
-    video: "video1.mp4",
-    responses: ["A softer choice.", "Good. The day is finished."]
-  },
-  quiet: {
-    title: "After the Last Reader Leaves",
-    file: "https://xenbohem.github.io/chimeraescape/audio/Hans-Songs/Properly-steeped.mp3",
-    video: "videos/quiet.mp4",
-    responses: ["Few stay this late.", "Poetry requires space."]
-  }
-  const tracks = {
-  winter: {
-    title: "Winter Hans — Unchained, Still Warm",
+    title: "Unchained, Still Warm",
     file: "winter-hans-unchained.mp3",
-    instrumental: "winter-hans-unchained-instrumental.mp3",
-    video: "videos/winter-unchained.mp4",
-    lyricsId: "unchainedLyrics",
-    responses: [
-      "Freedom does not announce itself.",
-      "Yes… the weight is gone.",
-      "Some silences are holy."
-    ]
+    video: "videos/winter.mp4",
+    lyrics: [
+      "I carried night inside my chest",
+      "Until You spoke my name once more",
+      "The dark was torn from marrow-deep",
+      "Peace arrived without a sound",
+      "The tea is warm",
+      "And I am not who I was"
+    ],
+    responses: ["Freedom does not announce itself."]
   },
-
   winterInstrumental: {
     title: "After the Chains (Instrumental)",
     file: "winter-hans-unchained-instrumental.mp3",
-    video: "videos/winter-unchained.mp4",
-    responses: [
-      "No words are required.",
-      "This is for reading.",
-      "Let the room breathe."
-    ]
-  },
-
-  twilight: {
-    title: "Twilight Service",
-    file: "twilight-hans.mp3",
-    video: "videos/twilight.mp4",
-    responses: [
-      "The hour between decisions.",
-      "A civilized uncertainty."
-    ]
+    video: "videos/winter.mp4",
+    responses: ["No words are required."]
   }
 };
 
-
-// Center Video
-const videoReveal = document.getElementById("videoReveal");
-const ambientVideo = document.getElementById("ambientVideo");
-const closeVideo = document.getElementById("closeVideo");
-closeVideo.addEventListener("click", () => videoReveal.classList.remove("active"));
-
-// Marginalia
-const marginalia = document.getElementById("marginalia");
-const noteInput = document.getElementById("noteInput");
-const submitNote = document.getElementById("submitNote");
-function addNote(text) {
-  const note = document.createElement("div");
-  note.className = "marginalia-note";
-  note.textContent = text;
-  note.style.left = Math.random()*90 + "%";
-  marginalia.appendChild(note);
-  setTimeout(() => marginalia.removeChild(note), 12000);
-}
-submitNote.addEventListener("click", () => {
-  if(noteInput.value.trim()!=="") { addNote(noteInput.value.trim()); noteInput.value=""; }
-});
-noteInput.addEventListener("keydown", e => { if(e.key==="Enter") submitNote.click(); });
-
-
-// Begin / Hold
-toggle.addEventListener("click", () => {
-  if(!listening){ audio.play(); toggle.textContent="❄ Hold"; listening=true; }
-  else{ audio.pause(); toggle.textContent="☕ Begin"; listening=false; }
-  const instrumentalToggle = document.getElementById("instrumentalToggle");
-
-instrumentalToggle.addEventListener("click", () => {
-  setMood("winterInstrumental");
-});
- const lyrics = {
-  unchainedLyrics: [
-    "I carried night inside my chest",
-    "Not claws or fire — just weight",
-    "Thoughts that circled endlessly",
-    "A heart that learned to brace",
-
-    "Until You spoke my name once more",
-    "And night no longer ruled",
-
-    "The dark was torn from marrow-deep",
-    "I cried out — not in pain",
-
-    "Peace arrived without a sound",
-    "No gate, no final plea",
-
-    "The tea is warm",
-    "The room is light",
-    "And I am not",
-    "Who I was",
-    "That night"
-  ]
-};
+/* ELEMENTS */
+const audio = document.getElementById("audio");
+const video = document.getElementById("video");
+const videoEl = document.getElementById("videoEl");
+const trackTitle = document.getElementById("trackTitle");
+const hansNote = document.getElementById("hansNote");
 const manuscript = document.getElementById("manuscript");
 const manuscriptText = document.getElementById("manuscriptText");
+const glow = document.getElementById("glow");
 
-function showLyrics(lyricsId) {
+let current;
+
+/* SET MOOD */
+function setMood(key) {
+  const t = tracks[key];
+  if (!t) return;
+  current = t;
+
+  audio.src = t.file;
+  trackTitle.textContent = t.title;
+  hansNote.textContent = t.responses[0];
+
+  videoEl.src = t.video;
+  video.classList.add("active");
+
+  manuscript.classList.remove("active");
   manuscriptText.innerHTML = "";
-  manuscript.classList.add("active");
 
-  lyrics[lyricsId].forEach((line, i) => {
-    const div = document.createElement("div");
-    div.className = "manuscript-line";
-    div.textContent = line;
-    div.style.animationDelay = `${i * 2.8}s`;
-    manuscriptText.appendChild(div);
-  });
- function setMood(mood) {
-  const track = tracks[mood];
-  if (!track) return;
-
-  audio.src = track.file;
-  trackTitle.textContent = track.title;
-  hansNote.textContent =
-    track.responses[Math.floor(Math.random() * track.responses.length)];
-
-  ambientVideo.src = track.video;
-  videoReveal.classList.add("active");
-
-  hideLyrics();
-
-  if (track.lyricsId) {
-    setTimeout(() => showLyrics(track.lyricsId), 4000);
+  if (t.lyrics) {
+    t.lyrics.forEach((line, i) => {
+      const d = document.createElement("div");
+      d.className = "manuscript-line";
+      d.style.animationDelay = `${i * 2.8}s`;
+      d.textContent = line;
+      manuscriptText.appendChild(d);
+    });
+    setTimeout(() => manuscript.classList.add("active"), 4000);
   }
 
-  if (listening) audio.play();
+  audio.play();
 }
 
+/* BUTTONS */
+document.querySelectorAll("[data-mood]").forEach(b =>
+  b.onclick = () => setMood(b.dataset.mood)
+);
+
+document.getElementById("playBtn").onclick = () => audio.paused ? audio.play() : audio.pause();
+
+/* GLOW */
+const ctx = new AudioContext();
+const src = ctx.createMediaElementSource(audio);
+const analyser = ctx.createAnalyser();
+src.connect(analyser);
+analyser.connect(ctx.destination);
+
+const buf = new Uint8Array(analyser.frequencyBinCount);
+function pulse() {
+  analyser.getByteFrequencyData(buf);
+  const avg = buf.reduce((a,b)=>a+b)/buf.length;
+  glow.style.boxShadow = `0 0 ${8+avg/20}px rgba(100,149,237,.6)`;
+  requestAnimationFrame(pulse);
+}
+audio.onplay = () => { ctx.resume(); pulse(); };
+
+/* MARGINALIA */
+const notesKey = "hansNotes";
+const noteInput = document.getElementById("noteInput");
+const noteBtn = document.getElementById("noteBtn");
+
+function spawnNote(text) {
+  const n = document.createElement("div");
+  n.className = "marginalia-note";
+  n.textContent = text;
+  n.style.left = Math.random()*90+"%";
+  document.body.appendChild(n);
+  setTimeout(()=>n.remove(),12000);
 }
 
-function hideLyrics() {
-  manuscript.classList.remove("active");
-}
+noteBtn.onclick = () => {
+  const t = noteInput.value.trim();
+  if (!t) return;
+  spawnNote(t);
+  const saved = JSON.parse(localStorage.getItem(notesKey)||"[]");
+  saved.push(t);
+  localStorage.setItem(notesKey, JSON.stringify(saved));
+  noteInput.value="";
+};
 
-// Set Mood (track + video + Hans response)
-function setMood(mood){
-  if(mood===currentMood) return;
-  currentMood=mood;
-  audio.src=tracks[mood].file;
-  trackTitle.textContent=tracks[mood].title;
-  hansNote.textContent=tracks[mood].responses[Math.floor(Math.random()*tracks[mood].responses.length)];
-  ambientVideo.src=tracks[mood].video;
-  videoReveal.classList.add("active");
-  if(listening) audio.play();
-}
-
-// Book buttons
-document.querySelectorAll(".book-category").forEach(btn=>{
-  btn.addEventListener("click",()=>{ setMood(btn.dataset.mood); });
-});
+(JSON.parse(localStorage.getItem(notesKey)||"[]")).forEach((n,i)=>
+  setTimeout(()=>spawnNote(n),i*1200)
+);
 </script>
+
 </body>
 </html>
