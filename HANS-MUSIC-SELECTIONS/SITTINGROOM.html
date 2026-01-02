@@ -399,6 +399,27 @@ function showLyrics(lyricsId) {
     div.style.animationDelay = `${i * 2.8}s`;
     manuscriptText.appendChild(div);
   });
+ function setMood(mood) {
+  const track = tracks[mood];
+  if (!track) return;
+
+  audio.src = track.file;
+  trackTitle.textContent = track.title;
+  hansNote.textContent =
+    track.responses[Math.floor(Math.random() * track.responses.length)];
+
+  ambientVideo.src = track.video;
+  videoReveal.classList.add("active");
+
+  hideLyrics();
+
+  if (track.lyricsId) {
+    setTimeout(() => showLyrics(track.lyricsId), 4000);
+  }
+
+  if (listening) audio.play();
+}
+
 }
 
 function hideLyrics() {
