@@ -187,11 +187,12 @@ button:hover { box-shadow: 0 0 14px var(--cornflower); }
 
 <script>
 /* DATA */
-const tracks = {
+  const tracks = {
   winter: {
     title: "Unchained, Still Warm",
     file: "winter-hans-unchained.mp3",
     video: "videos/winter.mp4",
+    vocal: true,
     lyrics: [
       "I carried night inside my chest",
       "Until You spoke my name once more",
@@ -202,10 +203,12 @@ const tracks = {
     ],
     responses: ["Freedom does not announce itself."]
   },
+
   winterInstrumental: {
     title: "After the Chains (Instrumental)",
     file: "winter-hans-unchained-instrumental.mp3",
     video: "videos/winter.mp4",
+    vocal: false,
     responses: ["No words are required."]
   }
 };
