@@ -385,7 +385,25 @@ instrumentalToggle.addEventListener("click", () => {
     "That night"
   ]
 };
+const manuscript = document.getElementById("manuscript");
+const manuscriptText = document.getElementById("manuscriptText");
 
+function showLyrics(lyricsId) {
+  manuscriptText.innerHTML = "";
+  manuscript.classList.add("active");
+
+  lyrics[lyricsId].forEach((line, i) => {
+    const div = document.createElement("div");
+    div.className = "manuscript-line";
+    div.textContent = line;
+    div.style.animationDelay = `${i * 2.8}s`;
+    manuscriptText.appendChild(div);
+  });
+}
+
+function hideLyrics() {
+  manuscript.classList.remove("active");
+}
 
 // Set Mood (track + video + Hans response)
 function setMood(mood){
