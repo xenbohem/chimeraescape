@@ -246,7 +246,9 @@ const glow = document.getElementById("glow");
 
 let current;
   }
-  
+  document.getElementById("closeManuscript").onclick = () => {
+  manuscript.classList.remove("active");
+};
   /* SET MOOD */
 function setMood(key) {
   const t = tracks[key];
