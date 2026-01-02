@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+ <!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -312,6 +312,10 @@ noteInput.addEventListener("keydown", e => { if(e.key==="Enter") submitNote.clic
 toggle.addEventListener("click", () => {
   if(!listening){ audio.play(); toggle.textContent="❄ Hold"; listening=true; }
   else{ audio.pause(); toggle.textContent="☕ Begin"; listening=false; }
+  const instrumentalToggle = document.getElementById("instrumentalToggle");
+
+instrumentalToggle.addEventListener("click", () => {
+  setMood("winterInstrumental");
 });
 
 // Set Mood (track + video + Hans response)
