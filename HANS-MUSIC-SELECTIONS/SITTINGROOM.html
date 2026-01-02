@@ -245,24 +245,28 @@ const manuscriptText = document.getElementById("manuscriptText");
 const glow = document.getElementById("glow");
 
 let current;
-
-/* SET MOOD */
+  }
+  
+  /* SET MOOD */
 function setMood(key) {
   const t = tracks[key];
   if (!t) return;
-  current = t;
 
+  audio.pause();
   audio.src = t.file;
+
   trackTitle.textContent = t.title;
   hansNote.textContent = t.responses[0];
 
   videoEl.src = t.video;
   video.classList.add("active");
 
+  // Reset manuscript every time
   manuscript.classList.remove("active");
   manuscriptText.innerHTML = "";
 
-  if (t.lyrics) {
+  // ONLY show lyrics if vocal track
+  if (t.vocal && t.lyrics) {
     t.lyrics.forEach((line, i) => {
       const d = document.createElement("div");
       d.className = "manuscript-line";
@@ -270,10 +274,12 @@ function setMood(key) {
       d.textContent = line;
       manuscriptText.appendChild(d);
     });
+
     setTimeout(() => manuscript.classList.add("active"), 4000);
   }
 
   audio.play();
+
 }
 
 /* BUTTONS */
