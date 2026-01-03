@@ -3,7 +3,7 @@
 // =========================
 
 // Replace these with your Supabase project values
-const supabaseUrl = "YOUR_SUPABASE_URL";
+const supabaseUrl = "https://xetcjpoxdyrzfcionohq.supabase.co";
 const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
