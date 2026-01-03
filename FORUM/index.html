@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wall</title>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Space+Mono&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Forum Wall</h1>
+
+<div id="auth">
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="signUp()">Sign Up</button>
+  <button onclick="logIn()">Log In</button>
+</div>
+
+<div id="forum" hidden>
+  <p id="user"></p>
+
+  <input id="title" placeholder="Post title">
+  <textarea id="content" placeholder="Write something..."></textarea>
+  <button onclick="addPost()">Post</button>
+
+  <div id="wall"></div>
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
