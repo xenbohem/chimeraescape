@@ -138,3 +138,4 @@ function createPostCard(post, prepend = false) {
 window.signUp = signUp;
 window.logIn = logIn;
 window.addPost = addPost;
+
