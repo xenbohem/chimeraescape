@@ -5,7 +5,7 @@ import { getFirestore, collection, addDoc, onSnapshot, query, orderBy }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  // PASTE YOUR CONFIG HERE
+  // PASTE YOUR CONFIG HERE 
 };
 
 const app = initializeApp(firebaseConfig);
