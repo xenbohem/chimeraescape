@@ -4,7 +4,7 @@
 
 // Replace these with your Supabase project values
 const supabaseUrl = "https://xetcjpoxdyrzfcionohq.supabase.co";
-const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
+const supabaseKey = "sb_publishable_tgYPzSe_w9fyGGVZeJQ-Hg_yWZLeIW9";
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 // =========================
