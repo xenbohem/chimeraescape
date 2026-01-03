@@ -1,0 +1,218 @@
+/* =====================
+   BASE / RESET
+===================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: 'Space Mono', monospace;
+  background: #f7f5f2;
+  color: #111;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* =====================
+   HEADERS
+===================== */
+h1 {
+  font-family: 'Special Elite', cursive;
+  text-align: center;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+/* =====================
+   BUTTONS / INPUTS
+===================== */
+input,
+textarea {
+  width: 100%;
+  background: #fffefb;
+  border: 2px solid #111;
+  padding: 10px;
+  margin: 6px 0;
+  font-family: inherit;
+  box-shadow: 3px 3px 0 #111;
+}
+
+button {
+  font-family: 'Special Elite', cursive;
+  background: #111;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 5px;
+  box-shadow: 4px 4px 0 #444;
+}
+
+button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0 #000;
+}
+
+/* Dark mode button tweak */
+#toggle {
+  display: block;
+  margin: 0 auto 15px;
+}
+
+/* =====================
+   CONTAINERS
+===================== */
+#auth,
+#forum {
+  max-width: 500px;
+  margin: 0 auto 30px;
+}
+
+#user {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+/* =====================
+   WALL GRID
+===================== */
+#wall {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+/* =====================
+   ZINE CARD
+===================== */
+.card {
+  position: relative;
+  background: #fffefb;
+  border: 2px solid #111;
+  padding: 15px;
+  box-shadow: 6px 6px 0 #111;
+  word-wrap: break-word;
+
+  /* torn-paper illusion */
+  clip-path: polygon(
+    2% 0%, 98% 1%, 100% 5%, 99% 95%,
+    96% 100%, 4% 99%, 0% 95%, 1% 5%
+  );
+}
+
+/* Tape strip */
+.card::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 30%;
+  width: 70px;
+  height: 18px;
+  background: rgba(220, 220, 220, 0.7);
+  transform: rotate(-2deg);
+}
+
+/* =====================
+   CARD TEXT
+===================== */
+.card h3 {
+  font-family: 'Special Elite', cursive;
+  font-size: 1.1rem;
+  margin-top: 0;
+}
+
+.card p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.card small {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+/* =====================
+   STICKERS / STAMPS
+===================== */
+.sticker {
+  position: absolute;
+  top: -12px;
+  right: -10px;
+  font-family: 'Special Elite', cursive;
+  font-size: 0.65rem;
+  padding: 4px 8px;
+  background: #fff;
+  border: 2px solid #111;
+  transform: rotate(-12deg);
+  box-shadow: 3px 3px 0 #111;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* =====================
+   PHOTOCOPY GRAIN
+===================== */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.03),
+      rgba(0,0,0,0.03) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  mix-blend-mode: multiply;
+}
+
+/* =====================
+   🌑 DARK ZINE MODE
+===================== */
+body.dark {
+  background: #0e0e0e;
+  color: #f5f3ef;
+}
+
+body.dark input,
+body.dark textarea {
+  background: #1a1a1a;
+  color: #f5f3ef;
+  border-color: #f5f3ef;
+  box-shadow: 3px 3px 0 #000;
+}
+
+body.dark button {
+  background: #f5f3ef;
+  color: #111;
+  box-shadow: 4px 4px 0 #000;
+}
+
+body.dark .card {
+  background: #f5f3ef;
+  color: #111;
+  box-shadow: 8px 8px 0 #000;
+}
+
+body.dark .sticker {
+  background: #111;
+  color: #fff;
+  border-color: #fff;
+}
+
+/* =====================
+   MOBILE FRIENDLY
+===================== */
+@media (max-width: 600px) {
+  #wall {
+    grid-template-columns: 1fr;
+  }
+}
