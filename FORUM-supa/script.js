@@ -4,7 +4,7 @@
 
 // Replace these with your Supabase project values
 const supabaseUrl = "https://xetcjpoxdyrzfcionohq.supabase.co";
-const supabaseKey = "sb_publishable_tgYPzSe_w9fyGGVZeJQ-Hg_yWZLeIW9";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhldGNqcG94ZHlyemZjaW9ub2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0MzY3MzEsImV4cCI6MjA4MzAxMjczMX0.658Q1QUpw11rnNCkNyGKuk4UJ9ERwKZqVIOTKDUxODs";
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 // =========================
