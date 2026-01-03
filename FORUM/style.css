@@ -1,0 +1,48 @@
+body {
+  background: #f7f5f2;
+  font-family: 'Space Mono', monospace;
+  color: #111;
+  padding: 20px;
+}
+
+/* Headings */
+h1 {
+  font-family: 'Special Elite', cursive;
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+/* Inputs */
+input, textarea {
+  background: #fffefb;
+  border: 2px solid #111;
+  font-family: 'Space Mono', monospace;
+  padding: 10px;
+  margin: 6px 0;
+  box-shadow: 3px 3px 0 #111;
+}
+
+button {
+  font-family: 'Special Elite', cursive;
+  background: #111;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #444;
+}
+
+button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0 #000;
+}
+
+/* Auth + forum containers */
+#auth, #forum {
+  max-width: 500px;
+  margin: 0 auto 30px;
+}
+
+/* Wall grid*
