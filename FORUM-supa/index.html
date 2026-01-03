@@ -1,39 +1,63 @@
-// =========================
-//  SUPABASE SETUP
-// =========================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🖤 Zine Forum Wall</title>
 
-// Replace these with your Supabase project values
-const supabaseUrl = "YOUR_SUPABASE_URL";
-const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  <!-- ZINE FONTS -->
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Space+Mono&display=swap" rel="stylesheet">
 
-// =========================
-//  DOM ELEMENTS
-// =========================
-const wall = document.getElementById("wall");
-const forum = document.getElementById("forum");
-const authDiv = document.getElementById("auth");
-const userText = document.getElementById("user");
+  <!-- STYLES -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// Sticker options
-const stickers = ["DIY", "ZINE", "VOID", "CUT & PASTE", "XEROX", "NO RULES", "HANDMADE"];
-function randomSticker() {
-  return stickers[Math.floor(Math.random() * stickers.length)];
-}
+  <!-- TITLE -->
+  <h1>🖤 ZINE WALL</h1>
 
-// =========================
-//  AUTH FUNCTIONS
-// =========================
-async function signUp() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  <!-- DARK MODE TOGGLE -->
+  <button id="toggle">🖤 Dark Zine Mode</button>
 
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) return alert(error.message);
-  alert("Check your email to confirm your account!");
-}
+  <!-- AUTH SECTION -->
+  <div id="auth">
+    <input id="email" type="email" placeholder="email" />
+    <input id="password" type="password" placeholder="password" />
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="logIn()">Log In</button>
+  </div>
 
-async function logIn() {
+  <!-- FORUM SECTION -->
+  <div id="forum" hidden>
+    <p id="user"></p>
+
+    <input id="title" placeholder="post title" />
+    <textarea id="content" rows="4" placeholder="paste your thoughts here..."></textarea>
+    <button onclick="addPost()">POST</button>
+
+    <!-- WALL -->
+    <div id="wall"></div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script type="module" src="script.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("toggle");
+
+    if (!toggle) {
+      console.warn("Dark mode toggle button not found");
+      return;
+    }
+
+    toggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      console.log("Dark mode toggled");
+    });
+  });
+</script>
+
+</body>
+</html>
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
