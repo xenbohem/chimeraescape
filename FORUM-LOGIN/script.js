@@ -2,7 +2,7 @@
 // SUPABASE SETUP
 // =======================
 const supabaseUrl = "YOUR_SUPABASE_URL";
-const supabaseKey = "YOUR_ANON_PUBLIC_KEY";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhldGNqcG94ZHlyemZjaW9ub2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0MzY3MzEsImV4cCI6MjA4MzAxMjczMX0.658Q1QUpw11rnNCkNyGKuk4UJ9ERwKZqVIOTKDUxODs";
 const supabase = supabaseJs.createClient(supabaseUrl, supabaseKey);
 
 // =======================
