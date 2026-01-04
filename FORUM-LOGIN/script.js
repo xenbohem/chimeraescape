@@ -21,7 +21,15 @@ const modalUser = document.getElementById("modalUser");
 document.getElementById("toggle").onclick = () => {
   document.body.classList.toggle("dark");
 };
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
 
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 3000);
+}
 // =======================
 // SIGN UP
 // =======================
