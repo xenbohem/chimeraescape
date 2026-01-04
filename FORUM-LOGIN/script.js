@@ -68,8 +68,8 @@ document.getElementById("loginBtn").onclick = async () => {
 // =======================
 document.getElementById("logoutBtn").onclick = async () => {
   await supabase.auth.signOut();
+  showToast("You’ve logged out safely ✂️");
 };
-
 // =======================
 // AUTH STATE (THE BOSS)
 // =======================
