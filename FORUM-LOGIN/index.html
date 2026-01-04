@@ -1,61 +1,100 @@
-<div id="forum" hidden>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zine Wall</title>
 
-  <!-- Top Bar -->
-  <header class="top-bar">
-    <h1 class="forum-title">✂ ZINE FRIENDS ✂</h1>
-    <div class="user-controls">
-      <span id="userGreeting"></span>
-      <button id="logoutBtn">Log out</button>
-    </div>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Space+Mono&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- TITLE + DARK MODE -->
+  <header class="landing-header">
+    <h1>ZINE WALL</h1>
+    <button id="toggle">🖤 Dark Zine Mode</button>
   </header>
 
-  <!-- Bot Row -->
-  <section class="bot-row">
-    <div class="bot-card">☕ Tea Bot</div>
-    <div class="bot-card">📌 Hans Tips</div>
-    <div class="bot-card">📅 Miki Events</div>
-    <div class="bot-card">🍰 Cafe with Chari</div>
-  </section>
+  <!-- AUTH (VISIBLE BY DEFAULT) -->
+  <div id="auth">
+    <input id="email" type="email" placeholder="email" />
+    <input id="password" type="password" placeholder="password" />
+    <div class="auth-buttons">
+      <button id="signupBtn">Sign Up</button>
+      <button id="loginBtn">Log In</button>
+    </div>
+  </div>
 
-  <!-- Main Layout -->
-  <main class="forum-layout">
+  <!-- FORUM (HIDDEN UNTIL LOGIN) -->
+  <div id="forum" hidden>
 
-    <!-- Left Drawer -->
-    <aside class="drawer">
-      <h3>Links</h3>
-      <ul>
-        <li><a href="#">Community Rules</a></li>
-        <li><a href="#">Submit a Zine</a></li>
-        <li><a href="#">Events</a></li>
-        <li><a href="#">About</a></li>
-      </ul>
-    </aside>
-
-    <!-- Threads -->
-    <section class="threads">
-
-      <div class="thread">
-        <h2>Tea Discussions</h2>
-        <div class="thread-posts" id="tea"></div>
+    <header class="top-bar">
+      <h1 class="forum-title">✂ ZINE FRIENDS ✂</h1>
+      <div class="user-controls">
+        <span id="userGreeting"></span>
+        <button id="logoutBtn">Log out</button>
       </div>
+    </header>
 
-      <div class="thread">
-        <h2>Hans Tips</h2>
-        <div class="thread-posts" id="hans"></div>
-      </div>
-
-      <div class="thread">
-        <h2>Miki Events</h2>
-        <div class="thread-posts" id="events"></div>
-      </div>
-
-      <div class="thread">
-        <h2>Cafe with Chari</h2>
-        <div class="thread-posts" id="cafe"></div>
-      </div>
-
+    <!-- BOT ROW -->
+    <section class="bot-row">
+      <div class="bot-card">☕ Tea Bot</div>
+      <div class="bot-card">📌 Hans Tips</div>
+      <div class="bot-card">📅 Miki Events</div>
+      <div class="bot-card">🍰 Cafe with Chari</div>
     </section>
 
-  </main>
-</div>
+    <!-- MAIN LAYOUT -->
+    <main class="forum-layout">
 
+      <!-- DRAWER -->
+      <aside class="drawer">
+        <h3>Links</h3>
+        <ul>
+          <li><a href="#">Community Rules</a></li>
+          <li><a href="#">Submit a Zine</a></li>
+          <li><a href="#">Events</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </aside>
+
+      <!-- THREADS -->
+      <section class="threads">
+        <div class="thread">
+          <h2>Tea Discussions</h2>
+        </div>
+        <div class="thread">
+          <h2>Hans Tips</h2>
+        </div>
+        <div class="thread">
+          <h2>Miki Events</h2>
+        </div>
+        <div class="thread">
+          <h2>Cafe with Chari</h2>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- SIGNUP SUCCESS MODAL -->
+  <div id="signupModal" class="modal">
+    <div class="modal-content">
+      <h2>YOU’RE IN 🖤</h2>
+      <p>Welcome to the zine wall,</p>
+      <p><strong id="modalUser"></strong></p>
+      <button id="closeModal">Enter the Wall</button>
+    </div>
+  </div>
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- APP SCRIPT -->
+  <script type="module" src="script.js"></script>
+
+</body>
+</html>
