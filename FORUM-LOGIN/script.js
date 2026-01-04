@@ -33,6 +33,9 @@ function showToast(message) {
 // =======================
 // SIGN UP
 // =======================
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
 document.getElementById("signupBtn").onclick = async () => {
   const email = emailInput.value;
   const password = passwordInput.value;
