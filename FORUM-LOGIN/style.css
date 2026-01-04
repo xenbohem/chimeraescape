@@ -88,6 +88,25 @@ body.dark .bot-card {
   border-color: #eee;
   box-shadow: 4px 4px 0 #eee;
 }
+.toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: white;
+  border: 2px solid black;
+  box-shadow: 4px 4px 0 black;
+  padding: 1rem;
+  font-size: 0.9rem;
+  display: none;
+  z-index: 1000;
+}
+
+body.dark .toast {
+  background: #111;
+  color: #fff;
+  border-color: #eee;
+  box-shadow: 4px 4px 0 #eee;
+}
 
 .forum-layout {
   display: grid;
