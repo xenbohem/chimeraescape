@@ -8,6 +8,9 @@ const supabase = supabaseJs.createClient(supabaseUrl, supabaseKey);
 // =======================
 // DOM
 // =======================
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
 const authDiv = document.getElementById("auth");
 const forum = document.getElementById("forum");
 const userGreeting = document.getElementById("userGreeting");
@@ -33,9 +36,6 @@ function showToast(message) {
 // =======================
 // SIGN UP
 // =======================
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-
 document.getElementById("signupBtn").onclick = async () => {
   const email = emailInput.value;
   const password = passwordInput.value;
