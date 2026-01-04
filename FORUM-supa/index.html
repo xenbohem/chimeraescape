@@ -2,57 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>🖤 Zine Wall</title>
+  <title>Zine Wall</title>
 
-  <!-- ZINE FONTS -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Space+Mono&display=swap" rel="stylesheet">
 
-  <!-- STYLES -->
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css">
-  <style>
-  .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    align-items: center;
-    justify-content: center;
-  }
-  .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-  }
-  #closeModal {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-  }
-</style>
 </head>
 <body>
 
-  <!-- TITLE -->
   <h1>🖤 ZINE WALL</h1>
 
-  <!-- DARK MODE TOGGLE -->
+  <!-- Dark Mode Toggle -->
   <button id="toggle">🖤 Dark Zine Mode</button>
 
-  <!-- AUTH SECTION -->
+  <!-- AUTH -->
   <div id="auth">
     <input id="email" type="email" placeholder="email" />
     <input id="password" type="password" placeholder="password" />
-    <button onclick="signUp()">Sign Up</button>
+    <button onclick="handleSignUp()">Sign Up</button>
     <button onclick="logIn()">Log In</button>
   </div>
 
-  <!-- FORUM SECTION -->
+  <!-- FORUM -->
   <div id="forum" hidden>
     <p id="user"></p>
 
@@ -60,38 +33,152 @@
     <textarea id="content" rows="4" placeholder="paste your thoughts here..."></textarea>
     <button onclick="addPost()">POST</button>
 
-    <!-- WALL -->
     <div id="wall"></div>
   </div>
 
-  <!-- SUPABASE CLIENT -->
+  <!-- ✅ SIGNUP SUCCESS MODAL -->
+  <div id="signupModal" class="modal">
+    <div class="modal-content">
+      <h2>YOU’RE IN 🖤</h2>
+      <p>Welcome to the zine wall,</p>
+      <p><strong id="modalUser"></strong></p>
+      <p>You’re officially part of the forum.</p>
+      <button id="closeModal">Enter the Wall</button>
+    </div>
+  </div>
+
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- DARK MODE TOGGLE SCRIPT -->
+  <!-- Dark Mode Script -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const toggle = document.getElementById("toggle");
-      toggle.addEventListener("click", () => {
-        document.body.classList.toggle("dark");
-        <!-- Success Modal -->
-<div id="signupModal" class="modal">
-  <div class="modal-content">
-    <h2>Success!</h2>
-    <p>Welcome to the forum, <span id="userName"></span>!</p>
-    <p>You are now part of the community. Feel free to post your thoughts.</p>
-    <button id="closeModal">Okay</button>
-  </div>
-</div>
-
-<!-- Modal Styles -->
-
-
-      });
+      toggle.onclick = () => document.body.classList.toggle("dark");
     });
   </script>
 
-  <!-- MAIN JS -->
-  <script type="module" src="script.js"></script>
+  <!-- MAIN SCRIPT -->
+  <script type="module">
+    // =========================
+    // SUPABASE SETUP
+    // =========================
+    const supabaseUrl = "YOUR_SUPABASE_URL";
+    const supabaseKey = "YOUR_ANON_PUBLIC_KEY";
+    const supabase = supabaseJs.createClient(supabaseUrl, supabaseKey);
+
+    // =========================
+    // DOM
+    // =========================
+    const authDiv = document.getElementById("auth");
+    const forum = document.getElementById("forum");
+    const userText = document.getElementById("user");
+    const wall = document.getElementById("wall");
+
+    // Modal
+    const modal = document.getElementById("signupModal");
+    const modalUser = document.getElementById("modalUser");
+    const closeModal = document.getElementById("closeModal");
+
+    // =========================
+    // SIGN UP (WITH MODAL)
+    // =========================
+    window.handleSignUp = async function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      // Show success modal
+      modalUser.textContent = email;
+      modal.style.display = "flex";
+    };
+
+    closeModal.onclick = () => {
+      modal.style.display = "none";
+    };
+
+    // =========================
+    // LOGIN
+    // =========================
+    window.logIn = async function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) alert(error.message);
+    };
+
+    // =========================
+    // AUTH STATE
+    // =========================
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        authDiv.hidden = true;
+        forum.hidden = false;
+        userText.textContent = "Logged in as " + session.user.email;
+        loadPosts();
+      } else {
+        authDiv.hidden = false;
+        forum.hidden = true;
+        userText.textContent = "";
+      }
+    });
+
+    // =========================
+    // POSTS
+    // =========================
+    window.addPost = async function () {
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
+      const { data: userData } = await supabase.auth.getUser();
+
+      if (!title || !content) return;
+
+      await supabase.from("posts").insert({
+        title,
+        content,
+        user_email: userData.user.email
+      });
+
+      document.getElementById("title").value = "";
+      document.getElementById("content").value = "";
+    };
+
+    async function loadPosts() {
+      const { data } = await supabase
+        .from("posts")
+        .select("*")
+        .order("inserted_at", { ascending: false });
+
+      wall.innerHTML = "";
+      data.forEach(post => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.transform = `rotate(${Math.random() * 4 - 2}deg)`;
+
+        card.innerHTML = `
+          <div class="sticker">ZINE</div>
+          <h3>${post.title}</h3>
+          <p>${post.content}</p>
+          <small>${post.user_email}</small>
+        `;
+        wall.appendChild(card);
+      });
+    }
+  </script>
 
 </body>
 </html>
