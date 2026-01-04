@@ -40,9 +40,13 @@ document.getElementById("signupBtn").onclick = async () => {
   const email = emailInput.value;
   const password = passwordInput.value;
 
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password
+  });
 
   if (error) {
+    console.error("Signup error:", error);
     alert(error.message);
     return;
   }
@@ -50,11 +54,6 @@ document.getElementById("signupBtn").onclick = async () => {
   modalUser.textContent = email.split("@")[0];
   modal.style.display = "flex";
 };
-
-document.getElementById("closeModal").onclick = () => {
-  modal.style.display = "none";
-};
-
 // =======================
 // LOG IN
 // =======================
