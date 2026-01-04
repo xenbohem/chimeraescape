@@ -70,7 +70,7 @@ supabase.auth.onAuthStateChange((event, session) => {
     authDiv.hidden = true;
     forum.hidden = false;
     userGreeting.textContent =
-      `Welcome, ${session.user.email.split("@")[0]} 🖤`;
+      `salutations, ${session.user.email.split("@")[0]} 🖤`;
   } else {
     authDiv.hidden = false;
     forum.hidden = true;
