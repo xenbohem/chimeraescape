@@ -414,7 +414,7 @@ function openAppAfterLogin(sess){
   chatLog.scrollTop = chatLog.scrollHeight;
   pulseAvatar();
 }
- 
+
   userNameField.addEventListener('input', () => {
   document.querySelector('.name-callout')?.classList.remove('needs-name');}
   addConsolePrompt('Enter your name on the right and press Start to begin.');
@@ -423,7 +423,11 @@ function openAppAfterLogin(sess){
 }
 const playerNameDisplay = document.getElementById('playerNameDisplay');
 if (playerNameDisplay) playerNameDisplay.textContent = state.name || 'Unknown';
-
+ setTimeout(() => {
+  if (!userNameField.value) {
+    userNameField.focus();
+  }
+}, 600);
   // respond handler
 function onRespond(){
   const name = (userNameField.value||'').trim();
