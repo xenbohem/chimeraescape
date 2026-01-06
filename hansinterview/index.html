@@ -414,26 +414,7 @@ function openAppAfterLogin(sess){
   chatLog.scrollTop = chatLog.scrollHeight;
   pulseAvatar();
 }
-  function setPlayerName(name) {
-  const clean = (name || '').trim();
-  state.name = clean || 'Unknown';
-
-  // input field
-  userNameField.value = clean;
-
-  // identity display
-  const display = document.getElementById('playerNameDisplay');
-  if (display) display.textContent = clean || 'Unknown';
-
-  // persist session name
-  if (session) {
-    session.name = clean;
-    const saved = readSavedSession();
-    if (saved && saved.code === session.code) {
-      saveSessionLocal(session.code, clean, saved.expiry);
-    }
-  }
-}
+ 
   userNameField.addEventListener('input', () => {
   document.querySelector('.name-callout')?.classList.remove('needs-name');}
   addConsolePrompt('Enter your name on the right and press Start to begin.');
