@@ -37,115 +37,23 @@
   .card{padding:16px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.02)}
   .dos{font-family:VT323,monospace;background:rgba(0,0,0,0.25);padding:12px;border-radius:8px;color:var(--muted);height:120px;overflow:auto}
   .section-title{font-family:Cinzel,serif;color:var(--neon);margin-bottom:6px}
-  
-#consolePrompt {
-  color: var(--cornflower);
-  font-weight: 600;
-  background: rgba(100,149,237,0.08);
-  border-left: 3px solid rgba(100,149,237,0.45);
-  padding: 10px 14px;
-  border-radius: 6px;
-  margin-top: 6px;
-  box-shadow: inset 0 0 18px rgba(100,149,237,0.06);
-}
+
+  /* Console prompt (questions) in cornflower blue */
+  #consolePrompt { color: var(--cornflower); font-weight:600; }
+
+  .chat-log{height:46vh;overflow:auto;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));display:flex;flex-direction:column;gap:10px}
+  .bubble{max-width:80%;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);color:#efe8ff;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+  .bubble.bot{align-self:flex-start;background:linear-gradient(180deg, rgba(138,43,226,0.06), rgba(85,0,102,0.04));font-family:VT323,monospace;color:var(--muted)}
+  /* User bubbles (including user name) now use cornflower blue text */
+  .bubble.me{align-self:flex-end;background:linear-gradient(90deg,var(--cornflower), rgba(100,149,237,0.12));color:var(--cornflower);font-weight:600}
+
+  .input-row{display:flex;gap:8px;margin-top:10px}
+
   /* Avatar */
   .avatar { width:92px;height:92px;border-radius:14px;overflow:hidden;border:2px solid rgba(255,255,255,0.06); background:linear-gradient(180deg,var(--accent1),var(--accent2)); display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 40px rgba(0,0,0,0.6); }
   .avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:12px}
 
   @media (max-width:980px){ .app{grid-template-columns:1fr} .brand{font-size:44px} .intro-card{padding:18px} }
-
-  .player-identity {
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-}
-
-.player-label {
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-
-.player-name-glow {
-  font-family: Cinzel, serif;
-  font-size: 1.6rem;
-  color: #f3f6ff;
-  text-shadow:
-    0 0 6px rgba(100,149,237,0.35),
-    0 0 14px rgba(100,149,237,0.18);
-  animation: nameBreath 4.5s ease-in-out infinite;
-}
-
-@keyframes nameBreath {
-  0%, 100% {
-    text-shadow:
-      0 0 6px rgba(100,149,237,0.25),
-      0 0 14px rgba(100,149,237,0.12);
-  }
-  50% {
-    text-shadow:
-      0 0 10px rgba(100,149,237,0.45),
-      0 0 22px rgba(100,149,237,0.25);
-  }
-}
-  .bubble.bot.question {
-  background: linear-gradient(
-    180deg,
-    rgba(100,149,237,0.12),
-    rgba(100,149,237,0.04)
-  );
-  border: 1px solid rgba(100,149,237,0.25);
-  color: #dbe6ff;
-  font-weight: 600;
-}
-
-.name-callout {
-  margin-top: 14px;
-  padding: 14px 16px;
-  border-radius: 10px;
-  background: rgba(100,149,237,0.08);
-  border: 1px solid rgba(100,149,237,0.25);
-  box-shadow: inset 0 0 20px rgba(100,149,237,0.08);
-}
-.name-callout input {
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(100,149,237,0.35);
-}
-
-.name-callout input:focus {
-  outline: none;
-  border-color: var(--cornflower);
-  box-shadow: 0 0 0 2px rgba(100,149,237,0.25);
-}
-
-.name-prompt {
-  font-family: Cinzel, serif;
-  color: var(--cornflower);
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-  letter-spacing: 0.04em;
-}
-
-.name-subtle {
-  margin-top: 6px;
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-  .name-callout {
-  animation: calloutBreath 3.6s ease-in-out infinite;
-}
-
-@keyframes calloutBreath {
-  0%, 100% {
-    box-shadow: inset 0 0 16px rgba(100,149,237,0.06);
-  }
-  50% {
-    box-shadow: inset 0 0 26px rgba(100,149,237,0.14);
-  }
-}
-
 </style>
 </head>
 <body>
@@ -257,12 +165,8 @@
   <!-- right column -->
   <aside class="card">
     <div style="display:flex;justify-content:space-between;align-items:center">
-   <div>    
-     <div class="player-identity">
-  <div class="player-label">You are</div>
-  <div id="playerNameDisplay" class="player-name-glow">—</div>
-</div>
-     <div class="section-title">Nocturne Chat</div>
+      <div>
+        <div class="section-title">Nocturne Chat</div>
         <div class="muted">Dialogue appears here.</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -271,16 +175,11 @@
     </div>
 
     <div id="chatLog" class="chat-log" role="log" aria-live="polite"></div>
-<div class="name-callout">
-  <div class="name-prompt">What should we call you?</div>
 
-  <div class="input-row">
-    <input id="userNameField" type="text" placeholder="Enter your name" aria-label="Your name">
-    <button id="respondBtn" class="btn primary">Start</button>
-  </div>
-
-  <div class="name-subtle">This name will be used throughout the quest.</div>
-</div>
+    <div class="input-row">
+      <input id="userNameField" type="text" placeholder="What should we call you?" aria-label="Your name">
+      <button id="respondBtn" class="btn primary">Start</button>
+    </div>
     <div style="margin-top:8px" class="muted">Your name is kept locally for personalization.</div>
   </aside>
 </main>
@@ -290,12 +189,10 @@
 <canvas id="certCanvas" width="1400" height="800" style="display:none"></canvas>
 
 <script>
-  
 /* Simplified, robust login + quest + avatar.
    Use "Log in" to generate a code immediately, confirm to enter app.
    Restore via "Have a code?" if you saved a code previously.
 */
-
 
 // keys
 const SESSION_KEY = 'vampish_session_v1';
@@ -406,7 +303,7 @@ function dosBoot(){ const lines = ["INIT.Nocturne v2.0","Loading nocturnal modul
 })();
 
 function resetIntroUI(){ nameBox.style.display='none'; generatedArea.style.display='none'; restoreArea.style.display='none'; welcomeArea.style.display='none'; }
-);
+
 function openAppAfterLogin(sess){
   session = sess;
   state.name = sess.name || '';
@@ -416,29 +313,12 @@ function openAppAfterLogin(sess){
   greetedOnce = false;
   inQuest = false;
   showBubble(`Access granted. ${state.name ? 'Hello ' + state.name + '.' : 'Identify yourself to begin.'}`, 'bot');
-  function showBubble(text, who='bot'){
-  const el = document.createElement('div');
-  el.className = 'bubble ' + who;
-  el.textContent = text;
-  chatLog.appendChild(el);
-  chatLog.scrollTop = chatLog.scrollHeight;
-  pulseAvatar();
-}
-
-  userNameField.addEventListener('input', () => {
-  document.querySelector('.name-callout')?.classList.remove('needs-name');}
   addConsolePrompt('Enter your name on the right and press Start to begin.');
   renderSavedList();
   dosArea.scrollTop = dosArea.scrollHeight;
 }
-const playerNameDisplay = document.getElementById('playerNameDisplay');
-if (playerNameDisplay) playerNameDisplay.textContent = state.name || 'Unknown';
- setTimeout(() => {
-  if (!userNameField.value) {
-    userNameField.focus();
-  }
-}, 600);
-  // respond handler
+
+// respond handler
 function onRespond(){
   const name = (userNameField.value||'').trim();
   if(!name){ userNameField.focus(); return; }
@@ -530,7 +410,7 @@ function presentQuestion(){
   if(state.qIndex >= activeQuestions.length) return concludeQuest();
   const q = activeQuestions[state.qIndex];
   addConsolePrompt(q.q);
-  showBubble(`Q${state.qIndex+1}: ${q.q}`, 'bot question');
+  showBubble(`Q${state.qIndex+1}: ${q.q}`, 'bot');
   const container = document.createElement('div'); container.style.display='flex'; container.style.flexDirection='column'; container.style.gap='8px';
   q.a.forEach(opt=>{
     const b = document.createElement('button'); b.className='btn'; b.textContent = opt.text;
@@ -598,7 +478,6 @@ function downloadDataUrl(dataUrl, filename){ const a=document.createElement('a')
 // convenience
 function dataURLtoBlob(dataurl){ var arr=dataurl.split(','), mime=arr[0].match(/:(.*?);/)[1], bstr=atob(arr[1]), n=bstr.length, u8=new Uint8Array(n); while(n--) u8[n]=bstr.charCodeAt(n); return new Blob([u8], {type:mime}); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,m=>'&#'+m.charCodeAt(0)+';'); }
-
 
 </script>
 </body>
