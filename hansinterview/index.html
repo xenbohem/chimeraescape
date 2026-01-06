@@ -453,7 +453,7 @@ function presentQuestion(){
   if(state.qIndex >= activeQuestions.length) return concludeQuest();
   const q = activeQuestions[state.qIndex];
   addConsolePrompt(q.q);
-  showBubble(`Q${state.qIndex+1}: ${q.q}`, 'bot');
+  showBubble(`Q${state.qIndex+1}: ${q.q}`, 'bot question');
   const container = document.createElement('div'); container.style.display='flex'; container.style.flexDirection='column'; container.style.gap='8px';
   q.a.forEach(opt=>{
     const b = document.createElement('button'); b.className='btn'; b.textContent = opt.text;
