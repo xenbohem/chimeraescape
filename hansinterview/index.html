@@ -280,10 +280,12 @@
 <canvas id="certCanvas" width="1400" height="800" style="display:none"></canvas>
 
 <script>
+  
 /* Simplified, robust login + quest + avatar.
    Use "Log in" to generate a code immediately, confirm to enter app.
    Restore via "Have a code?" if you saved a code previously.
 */
+
 
 // keys
 const SESSION_KEY = 'vampish_session_v1';
@@ -411,6 +413,26 @@ function openAppAfterLogin(sess){
   chatLog.appendChild(el);
   chatLog.scrollTop = chatLog.scrollHeight;
   pulseAvatar();
+}
+  function setPlayerName(name) {
+  const clean = (name || '').trim();
+  state.name = clean || 'Unknown';
+
+  // input field
+  userNameField.value = clean;
+
+  // identity display
+  const display = document.getElementById('playerNameDisplay');
+  if (display) display.textContent = clean || 'Unknown';
+
+  // persist session name
+  if (session) {
+    session.name = clean;
+    const saved = readSavedSession();
+    if (saved && saved.code === session.code) {
+      saveSessionLocal(session.code, clean, saved.expiry);
+    }
+  }
 }
   userNameField.addEventListener('input', () => {
   document.querySelector('.name-callout')?.classList.remove('needs-name');}
