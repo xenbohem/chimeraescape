@@ -354,6 +354,14 @@ function openAppAfterLogin(sess){
   greetedOnce = false;
   inQuest = false;
   showBubble(`Access granted. ${state.name ? 'Hello ' + state.name + '.' : 'Identify yourself to begin.'}`, 'bot');
+  function showBubble(text, who='bot'){
+  const el = document.createElement('div');
+  el.className = 'bubble ' + who;
+  el.textContent = text;
+  chatLog.appendChild(el);
+  chatLog.scrollTop = chatLog.scrollHeight;
+  pulseAvatar();
+}
   addConsolePrompt('Enter your name on the right and press Start to begin.');
   renderSavedList();
   dosArea.scrollTop = dosArea.scrollHeight;
