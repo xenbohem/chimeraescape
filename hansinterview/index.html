@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vampish — Nocturnal Quest</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Cinzel:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg1:#05030a; --bg2:#12001a; --cornflower:#6495ED; --accent1:#8a2be2; --accent2:#550066;
+    --muted:#cfc1e6; --neon:#c97bff; --glass: rgba(255,255,255,0.03); --base:18px;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;background:
+    radial-gradient(800px 400px at 12% 8%, rgba(100,149,237,0.08), transparent),
+    linear-gradient(180deg,var(--bg1),var(--bg2)); color:#efe8ff;font-size:var(--base);-webkit-font-smoothing:antialiased;}
+
+  /* Intro overlay */
+  .intro { position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:60;
+    background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));backdrop-filter: blur(6px); }
+  .intro-card{ width:min(880px,94%);border-radius:14px;padding:28px;background:linear-gradient(180deg, rgba(12,4,18,0.9), rgba(6,2,10,0.92));
+    box-shadow:0 30px 90px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.04); display:flex;gap:22px;align-items:center;flex-wrap:wrap; justify-content:space-between;}
+  .brand{ font-family:Cinzel,serif;color:var(--cornflower);font-size:56px;letter-spacing:4px;margin:0;padding:0;}
+  .brand-sub{font-family:VT323,monospace;color:var(--muted);margin-top:6px;}
+  .intro-right{min-width:320px;max-width:420px;background:rgba(255,255,255,0.02);padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+  .muted{color:var(--muted)}
+  .btn{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff;cursor:pointer}
+  .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--cornflower));border:none;color:#fff}
+  .codeBadge{font-family:VT323,monospace;background:linear-gradient(90deg,var(--accent1),var(--accent2));padding:10px 14px;border-radius:8px;color:#fff;letter-spacing:6px}
+  input[type="text"], input[type="password"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
+
+  /* App layout */
+  .app{ max-width:1200px;margin:30px auto;padding:20px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);
+    display:grid;grid-template-columns:420px 1fr;gap:18px;align-items:start;}
+  .card{padding:16px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.02)}
+  .dos{font-family:VT323,monospace;background:rgba(0,0,0,0.25);padding:12px;border-radius:8px;color:var(--muted);height:120px;overflow:auto}
+  .section-title{font-family:Cinzel,serif;color:var(--neon);margin-bottom:6px}
+
+  /* Console prompt (questions) in cornflower blue */
+  #consolePrompt { color: var(--cornflower); font-weight:600; }
+
+  .chat-log{height:46vh;overflow:auto;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));display:flex;flex-direction:column;gap:10px}
+  .bubble{max-width:80%;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);color:#efe8ff;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+  .bubble.bot{align-self:flex-start;background:linear-gradient(180deg, rgba(138,43,226,0.06), rgba(85,0,102,0.04));font-family:VT323,monospace;color:var(--muted)}
+  /* User bubbles (including user name) now use cornflower blue text */
+  .bubble.me{align-self:flex-end;background:linear-gradient(90deg,var(--cornflower), rgba(100,149,237,0.12));color:var(--cornflower);font-weight:600}
+
+  .input-row{display:flex;gap:8px;margin-top:10px}
+
+  /* Avatar */
+  .avatar { width:92px;height:92px;border-radius:14px;overflow:hidden;border:2px solid rgba(255,255,255,0.06); background:linear-gradient(180deg,var(--accent1),var(--accent2)); display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 40px rgba(0,0,0,0.6); }
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:12px}
+
+  @media (max-width:980px){ .app{grid-template-columns:1fr} .brand{font-size:44px} .intro-card{padding:18px} }
+
+  .player-identity {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.player-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.player-name-glow {
+  font-family: Cinzel, serif;
+  font-size: 1.6rem;
+  color: #f3f6ff;
+  text-shadow:
+    0 0 6px rgba(100,149,237,0.35),
+    0 0 14px rgba(100,149,237,0.18);
+  animation: nameBreath 4.5s ease-in-out infinite;
+}
+
+@keyframes nameBreath {
+  0%, 100% {
+    text-shadow:
+      0 0 6px rgba(100,149,237,0.25),
+      0 0 14px rgba(100,149,237,0.12);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(100,149,237,0.45),
+      0 0 22px rgba(100,149,237,0.25);
+  }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Intro overlay -->
+<div id="intro" class="intro" role="dialog" aria-modal="true">
+  <div class="intro-card" role="document" aria-label="Vampish sign-in">
+    <div>
+      <h1 class="brand">vampish</h1>
+      <div class="brand-sub">curate your nocturnal essence</div>
+      <p class="muted" style="margin-top:18px">
+        A ritual login is required. You'll receive a one-time 5-letter access code. Save it if you want to return, or let the browser remember you for 24 hours.
+      </p>
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="introLoginBtn" class="btn primary">Log in</button>
+        <button id="introRestoreBtn" class="btn">Have a code?</button>
+      </div>
+    </div>
+
+    <div class="intro-right">
+      <div id="introState"><div style="font-weight:700">Sign-in</div><div class="muted" style="margin-top:6px">Start here to enter the Nocturnal Quest.</div></div>
+
+      <div id="introActions" style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+        <div id="nameBox" style="display:none"><label for="introName">Display name</label><input id="introName" type="text" placeholder="What should we call you?" /></div>
+
+        <div id="generatedArea" style="display:none;align-items:center;gap:12px">
+          <div class="codeBadge" id="introCode">ABCDE</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px"><button id="introCopyBtn" class="btn">Copy</button><button id="introSaveBtn" class="btn">Save file</button></div>
+            <div class="muted">Click Confirm to accept this code and continue.</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <label style="display:flex;gap:8px;align-items:center;color:var(--muted)"><input id="introKeep" type="checkbox" checked /> keep me logged in 24h</label>
+              <div style="flex:1"></div>
+              <button id="introConfirmBtn" class="btn primary">Confirm</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="restoreArea" style="display:none;gap:8px">
+          <label class="muted">Paste your 5-letter code</label>
+          <input id="restoreInputIntro" type="text" placeholder="ABCDE" />
+          <div style="display:flex;gap:8px">
+            <button id="restoreConfirmBtn" class="btn primary">Restore</button>
+            <button id="restoreCancelBtn" class="btn">Cancel</button>
+          </div>
+        </div>
+
+        <div id="welcomeArea" style="display:none">
+          <div style="font-weight:700" id="welcomeText">Welcome, guest</div>
+          <div class="muted" style="margin-top:6px">Click Start to enter the quest (session will persist for 24h).</div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button id="welcomeStartBtn" class="btn primary">Start</button>
+            <button id="welcomeLogoutBtn" class="btn">Logout</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- App -->
+<main id="app" class="app" style="display:none" role="main" aria-live="polite">
+
+  <!-- left column -->
+  <section class="card">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="avatar" id="avatarBtn" title="Click to upload avatar (stored locally)">
+        <img id="avatarImg" src="https://placehold.co/92x92/png?text=V" alt="avatar">
+      </div>
+      <div style="flex:1">
+        <div style="font-weight:700">Nocturne AI</div>
+        <div class="muted">Your virtual archivist of the night</div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px" class="section-title">Nocturne Console</div>
+    <div class="dos" id="dosArea" aria-live="polite">INIT.Nocturne v2.0<br/>Initializing...</div>
+
+    <div id="consoleControl" style="margin-top:12px">
+      <div id="consolePrompt" class="muted">Say your name on the right to begin the trial.</div>
+      <div id="consoleChoices" style="margin-top:10px"></div>
+    </div>
+
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0">
+
+    <div class="section-title">Result & Certificate</div>
+    <div class="muted">After completing the trial the certificate will appear here.</div>
+
+    <div id="resultCard" style="margin-top:12px">
+      <div id="resultIntro" style="font-weight:700;color:var(--neon);font-family:Cinzel,serif">Awaiting initiation...</div>
+      <div id="resultBody" class="muted" style="margin-top:8px">Complete the trial to receive your certificate.</div>
+
+      <div id="certPreviewArea" style="display:none;margin-top:12px">
+        <div class="cert-thumb" id="certThumb">Preview</div>
+        <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:8px">
+          <button id="downloadBtn" class="btn">Download PNG</button>
+          <button id="saveDiskBtn" class="btn">Save to disk...</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div class="section-title" style="font-size:16px">Local Archive</div>
+      <div class="saved" id="savedList" style="min-height:100px">No certificates saved yet.</div>
+    </div>
+  </section>
+
+  <!-- right column -->
+  <aside class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+   <div>    
+     <div class="player-identity">
+  <div class="player-label">You are</div>
+  <div id="playerNameDisplay" class="player-name-glow">—</div>
+</div>
+     <div class="section-title">Nocturne Chat</div>
+        <div class="muted">Dialogue appears here.</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="logoutBtn" class="btn">Logout</button>
+      </div>
+    </div>
+
+    <div id="chatLog" class="chat-log" role="log" aria-live="polite"></div>
+
+    <div class="input-row">
+      <input id="userNameField" type="text" placeholder="What should we call you?" aria-label="Your name">
+      <button id="respondBtn" class="btn primary">Start</button>
+    </div>
+    <div style="margin-top:8px" class="muted">Your name is kept locally for personalization.</div>
+  </aside>
+</main>
+
+<!-- hidden file input and canvas -->
+<input id="avatarInput" type="file" accept="image/*" style="display:none" />
+<canvas id="certCanvas" width="1400" height="800" style="display:none"></canvas>
+
+<script>
+/* Simplified, robust login + quest + avatar.
+   Use "Log in" to generate a code immediately, confirm to enter app.
+   Restore via "Have a code?" if you saved a code previously.
+*/
+
+// keys
+const SESSION_KEY = 'vampish_session_v1';
+const CERTS_KEY = 'vampish_certs_v1';
+const LORE_KEY = 'vampish_lore_v1';
+const AVATAR_KEY = 'vampish_avatar_v1';
+const STATE_KEY = 'vampish_state_v1';
+
+// DOM
+const intro = document.getElementById('intro');
+const introLoginBtn = document.getElementById('introLoginBtn');
+const introRestoreBtn = document.getElementById('introRestoreBtn');
+const nameBox = document.getElementById('nameBox');
+const introName = document.getElementById('introName');
+const generatedArea = document.getElementById('generatedArea');
+const introCode = document.getElementById('introCode');
+const introCopyBtn = document.getElementById('introCopyBtn');
+const introSaveBtn = document.getElementById('introSaveBtn');
+const introConfirmBtn = document.getElementById('introConfirmBtn');
+const introKeep = document.getElementById('introKeep');
+const restoreArea = document.getElementById('restoreArea');
+const restoreInputIntro = document.getElementById('restoreInputIntro');
+const restoreConfirmBtn = document.getElementById('restoreConfirmBtn');
+const restoreCancelBtn = document.getElementById('restoreCancelBtn');
+const welcomeArea = document.getElementById('welcomeArea');
+const welcomeText = document.getElementById('welcomeText');
+const welcomeStartBtn = document.getElementById('welcomeStartBtn');
+const welcomeLogoutBtn = document.getElementById('welcomeLogoutBtn');
+
+const app = document.getElementById('app');
+const chatLog = document.getElementById('chatLog');
+const userNameField = document.getElementById('userNameField');
+const respondBtn = document.getElementById('respondBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+
+const dosArea = document.getElementById('dosArea');
+const consolePrompt = document.getElementById('consolePrompt');
+const consoleChoices = document.getElementById('consoleChoices');
+
+const certCanvas = document.getElementById('certCanvas');
+const ctx = certCanvas.getContext('2d');
+
+const avatarBtn = document.getElementById('avatarBtn');
+const avatarImg = document.getElementById('avatarImg');
+const avatarInput = document.getElementById('avatarInput');
+
+// state
+let session = null;
+let generatedCode = null;
+let state = { name:null, qIndex:-1, scores:{}, answers:[], lastCert:null };
+let activeQuestions = [];
+let greetedOnce = false;
+let inQuest = false;
+
+// helpers
+function randCode(n=5){ const A="ABCDEFGHIJKLMNOPQRSTUVWXYZ"; let s=''; for(let i=0;i<n;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
+function nowMs(){ return Date.now(); }
+function in24hMs(){ return nowMs() + 24*60*60*1000; }
+function readSavedSession(){ try{ const raw = JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); if(!raw) return null; if(raw.expiry && Date.now() > raw.expiry){ localStorage.removeItem(SESSION_KEY); return null; } return raw; }catch(e){ return null; } }
+function saveSessionLocal(code,name,expiry){ localStorage.setItem(SESSION_KEY, JSON.stringify({ code, name, expiry })); }
+function clearSavedSession(){ localStorage.removeItem(SESSION_KEY); }
+
+// avatar upload
+function loadAvatar(){ const raw = localStorage.getItem(AVATAR_KEY); if(raw) avatarImg.src = raw; }
+avatarBtn.addEventListener('click', ()=> avatarInput.click());
+avatarInput.addEventListener('change', e=>{ const f = e.target.files && e.target.files[0]; if(!f) return; if(!f.type.startsWith('image/')) return alert('Choose an image file.'); const r = new FileReader(); r.onload = ()=>{ localStorage.setItem(AVATAR_KEY, r.result); avatarImg.src = r.result; showBubble('Avatar updated.', 'bot'); }; r.readAsDataURL(f); });
+
+// chat helpers
+function showBubble(text, who='bot'){ const el = document.createElement('div'); el.className = 'bubble ' + (who==='me' ? 'me' : 'bot'); el.textContent = text; chatLog.appendChild(el); chatLog.scrollTop = chatLog.scrollHeight; while(chatLog.children.length > 300) chatLog.removeChild(chatLog.firstChild); pulseAvatar(); }
+function addConsolePrompt(text){ consolePrompt.textContent = text; }
+
+// small pulse
+let pulseTimer = null;
+function pulseAvatar(){ avatarBtn.style.boxShadow = '0 0 30px rgba(100,149,237,0.18)'; clearTimeout(pulseTimer); pulseTimer = setTimeout(()=> avatarBtn.style.boxShadow = '0 10px 40px rgba(0,0,0,0.6)', 700); }
+
+// DOS boot
+function dosBoot(){ const lines = ["INIT.Nocturne v2.0","Loading nocturnal modules... [OK]","Establishing moonlink... [OK]","Decrypting velvet keys... [OK]","Nocturne AI standing by."]; dosArea.innerHTML=''; let i=0; function step(){ if(i>=lines.length){ dosArea.innerHTML += '<br/>Ready.'; return; } dosArea.innerHTML += lines[i++] + '<br/>'; dosArea.scrollTop = dosArea.scrollHeight; setTimeout(step, 420 + Math.random()*240); } step(); }
+
+// initialization
+(function init(){
+  loadAvatar();
+  renderSavedList();
+  dosBoot();
+
+  const s = readSavedSession();
+  if(s){ welcomeArea.style.display = 'block'; welcomeText.textContent = `Welcome, ${s.name || 'traveler'}`; } else { resetIntroUI(); }
+
+  introLoginBtn.addEventListener('click', ()=> { resetIntroUI(); generatedCode = randCode(5); introCode.textContent = generatedCode; generatedArea.style.display='flex'; nameBox.style.display='block'; showBubble('A ritual code has been prepared. You may save it or confirm to continue.', 'bot'); });
+  introRestoreBtn.addEventListener('click', ()=> { resetIntroUI(); restoreArea.style.display='flex'; });
+
+  introCopyBtn.addEventListener('click', async ()=>{ if(!generatedCode) return; try{ await navigator.clipboard.writeText(generatedCode); showBubble('Code copied to clipboard.', 'bot'); }catch(e){ alert('Copy failed'); }});
+  introSaveBtn.addEventListener('click', ()=>{ if(!generatedCode) return; const blob=new Blob([`Vampish access code: ${generatedCode}`], {type:'text/plain'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`vampish-code-${generatedCode}.txt`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); showBubble('Saved code to file.', 'bot'); });
+
+  introConfirmBtn.addEventListener('click', ()=>{ if(!generatedCode) return alert('No code generated. Click Log in first.'); const keep = !!introKeep.checked; const nm = (introName.value||'').trim() || 'NoName'; const expiry = keep ? in24hMs() : null; session = { code: generatedCode, name: nm, expiry }; if(keep) saveSessionLocal(session.code, session.name, session.expiry); openAppAfterLogin(session); });
+
+  restoreConfirmBtn.addEventListener('click', ()=>{ const val=(restoreInputIntro.value||'').trim().toUpperCase(); if(!/^[A-Z]{5}$/.test(val)) return alert('Enter a 5-letter code'); const saved = readSavedSession(); if(saved && saved.code===val){ session = saved; openAppAfterLogin(session); } else { const nm = prompt('No local session found for that code. Enter a display name to proceed:','NoName')||'NoName'; session = { code: val, name: nm, expiry: null }; openAppAfterLogin(session); }});
+  restoreCancelBtn.addEventListener('click', ()=> restoreArea.style.display='none');
+
+  welcomeStartBtn.addEventListener('click', ()=> { const s = readSavedSession(); if(s){ session = s; openAppAfterLogin(session); } else { welcomeArea.style.display='none'; }});
+  welcomeLogoutBtn.addEventListener('click', ()=>{ clearSavedSession(); resetIntroUI(); showBubble('Local session cleared.', 'bot'); });
+
+  respondBtn.addEventListener('click', onRespond);
+  logoutBtn.addEventListener('click', ()=>{ if(!confirm('Log out and return to login?')) return; clearSavedSession(); session=null; app.style.display='none'; intro.style.display='flex'; chatLog.innerHTML=''; resetIntroUI(); });
+
+  downloadBtn.addEventListener('click', ()=>{ if(state.lastCert) downloadDataUrl(state.lastCert.png, `certificate-${(state.name||'NoName').replace(/\s+/g,'_')}.png`); });
+  saveDiskBtn.addEventListener('click', async ()=>{ if(!state.lastCert) return alert('No certificate.'); if(window.showSaveFilePicker){ try{ const opts={ suggestedName:`certificate-${(state.name||'NoName').replace(/\s+/g,'_')}.png`, types:[{description:'PNG', accept:{'image/png':['.png']}}] }; const h = await window.showSaveFilePicker(opts); const w = await h.createWritable(); const blob = dataURLtoBlob(state.lastCert.png); await w.write(blob); await w.close(); alert('Saved'); }catch(e){ console.warn(e); alert('Save cancelled'); } } else downloadDataUrl(state.lastCert.png, `certificate-${(state.name||'NoName').replace(/\s+/g,'_')}.png`); });
+
+})();
+
+function resetIntroUI(){ nameBox.style.display='none'; generatedArea.style.display='none'; restoreArea.style.display='none'; welcomeArea.style.display='none'; }
+
+function openAppAfterLogin(sess){
+  session = sess;
+  state.name = sess.name || '';
+  intro.style.display = 'none';
+  app.style.display = 'grid';
+  userNameField.value = state.name || '';
+  greetedOnce = false;
+  inQuest = false;
+  showBubble(`Access granted. ${state.name ? 'Hello ' + state.name + '.' : 'Identify yourself to begin.'}`, 'bot');
+  addConsolePrompt('Enter your name on the right and press Start to begin.');
+  renderSavedList();
+  dosArea.scrollTop = dosArea.scrollHeight;
+}
+const playerNameDisplay = document.getElementById('playerNameDisplay');
+if (playerNameDisplay) playerNameDisplay.textContent = state.name || 'Unknown';
+
+  // respond handler
+function onRespond(){
+  const name = (userNameField.value||'').trim();
+  if(!name){ userNameField.focus(); return; }
+  state.name = name;
+  if(session){ session.name = name; const saved = readSavedSession(); if(saved && saved.code === session.code) saveSessionLocal(session.code, name, saved.expiry); }
+  if(!greetedOnce){ showBubble(`Welcome, ${name}. Nocturne awaits.`, 'bot'); greetedOnce = true; }
+  if(inQuest) return;
+  startQuestFlow();
+}
+
+// Quest flow (same as previous implementation)
+const BASE_QUESTIONS = [
+  { q: "You step into the moonlit courtyard. What draws your attention first?", a:[
+    {t:'Aristocrat', text:'A grand chandelier and marble statues.'},
+    {t:'Nosferatu', text:'A shadowed drain leading to the sewers.'},
+    {t:'NightHunter', text:'A rusted crossbow hidden behind ivy.'},
+  ]},
+  { q: "What do you sip from the chalice?", a:[
+    {t:'Bloodseer', text:'A mysterious crimson liquid that whispers.'},
+    {t:'Aristocrat', text:'A rare wine, aged and refined.'},
+    {t:'Nosferatu', text:'Cold iron water, bitter but necessary.'},
+  ]},
+  { q: "Your power is strongest when:", a:[
+    {t:'Ancient', text:'You stand atop a ruined altar and remember old names.'},
+    {t:'NightHunter', text:'You hunt beneath rainy rooftops.'},
+    {t:'Bloodseer', text:'You peer into reflections and dream of futures.'},
+  ]},
+  { q: "A rival approaches. You:", a:[
+    {t:'Aristocrat', text:'Invite them politely to a duel of wits.'},
+    {t:'Nosferatu', text:'Lurk and strike when they are alone.'},
+    {t:'NightHunter', text:'Traps and precision — you never miss.'},
+  ]},
+  { q: "Your emblem would most likely be:", a:[
+    {t:'Bloodseer', text:'An eye within a crescent moon.'},
+    {t:'Ancient', text:'A ringed star, weathered by time.'},
+    {t:'Aristocrat', text:'A fleur-de-lune embroidered in silver.'},
+  ]},
+  { q: "Choose a companion:", a:[
+    {t:'Nosferatu', text:'A roguish alley fox with daring.'},
+    {t:'Bloodseer', text:'A raven that carries secrets.'},
+    {t:'Ancient', text:'A slow tortoise, ancient as stone.'},
+  ]},
+  { q: "Your philosophy:", a:[
+    {t:'NightHunter', text:'Purpose is honed by the hunt.'},
+    {t:'Aristocrat', text:'Beauty and influence shape the night.'},
+    {t:'Bloodseer', text:'Knowledge leaks between the folds of dreams.'},
+  ]},
+];
+const LORE_QUESTIONS = [
+  { q: "A ritual is offered — you must either give or receive. You:", a:[
+    {t:'Bloodseer', text:'Accept to see what visions it opens.'},
+    {t:'Aristocrat', text:'Refuse politely — rituals are for the desperate.'},
+    {t:'Ancient', text:'Participate slowly; every ritual costs a memory.'},
+  ]},
+  { q: "A symbol stands before you (a cross, a chalice, a broken crown). You:", a:[
+    {t:'Nosferatu', text:'Use it as cover and step into shadow.'},
+    {t:'Bloodseer', text:'Read its story for hidden omens.'},
+    {t:'Aristocrat', text:'Wear it as an emblem and command attention.'},
+  ]},
+];
+const TYPES = {
+  'Aristocrat': { title:'The Aristocrat', desc:'A charismatic vampire of salons and shadows.'},
+  'Nosferatu': { title:'The Nosferatu', desc:'A creature of cobbles and sewers.'},
+  'NightHunter': { title:'The Night Hunter', desc:'A lethal predator who stalks by moonlight.'},
+  'Bloodseer': { title:'The Bloodseer', desc:'A mystic of crimson visions.'},
+  'Ancient': { title:'The Ancient', desc:'Slow, knowing and immovable.'},
+};
+
+function startQuestFlow(){
+  inQuest = true;
+  try{ loreSettings = JSON.parse(localStorage.getItem(LORE_KEY) || '{}') || {}; }catch(e){ loreSettings = { includeLore:false }; }
+  activeQuestions = (loreSettings.includeLore ? LORE_QUESTIONS.concat(BASE_QUESTIONS) : BASE_QUESTIONS.slice());
+  state.qIndex = 0; state.scores = {}; state.answers = [];
+  addConsolePrompt('Nocturne asks: Do you consent to the trial?');
+  presentYesNoInConsole();
+}
+
+function presentYesNoInConsole(){
+  consoleChoices.innerHTML = '';
+  const yes = document.createElement('button'); yes.className='btn primary'; yes.textContent='Yes';
+  const no = document.createElement('button'); no.className='btn'; no.textContent='No';
+  yes.onclick = ()=>{ showBubble('Yes','me'); consoleChoices.innerHTML=''; presentQuestion(); };
+  no.onclick = ()=>{ showBubble('No','me'); consoleChoices.innerHTML=''; addConsolePrompt('Trial declined.'); showBubble('Very well. Return when moonlight calls.','bot'); inQuest=false; };
+  consoleChoices.appendChild(yes); consoleChoices.appendChild(no);
+}
+
+function presentQuestion(){
+  consoleChoices.innerHTML = '';
+  if(state.qIndex >= activeQuestions.length) return concludeQuest();
+  const q = activeQuestions[state.qIndex];
+  addConsolePrompt(q.q);
+  showBubble(`Q${state.qIndex+1}: ${q.q}`, 'bot');
+  const container = document.createElement('div'); container.style.display='flex'; container.style.flexDirection='column'; container.style.gap='8px';
+  q.a.forEach(opt=>{
+    const b = document.createElement('button'); b.className='btn'; b.textContent = opt.text;
+    b.onclick = ()=> {
+      Array.from(container.children).forEach(ch => ch.disabled = true);
+      showBubble(opt.text, 'me');
+      state.answers.push({ q: state.qIndex+1, type:opt.t, text:opt.text });
+      state.scores[opt.t] = (state.scores[opt.t] || 0) + 1;
+      state.qIndex++;
+      setTimeout(()=> { if(state.qIndex < activeQuestions.length) presentQuestion(); else concludeQuest(); }, 420);
+    };
+    container.appendChild(b);
+  });
+  consoleChoices.appendChild(container);
+}
+
+function determineType(){
+  const keys = Object.keys(TYPES); let best=null, bestScore=-1;
+  keys.forEach(k=>{ const s = state.scores[k] || 0; if(s > bestScore){ best = k; bestScore = s; }});
+  const tied = keys.filter(k => (state.scores[k] || 0) === bestScore);
+  return tied.length === 1 ? tied[0] : tied.join(' + ');
+}
+
+function concludeQuest(){
+  inQuest = false;
+  const key = determineType();
+  const info = TYPES[key] || { title:key, desc:'A unique nocturnal synthesis.' };
+  resultIntro.textContent = info.title;
+  resultBody.textContent = info.desc;
+  const png = generateCertificatePNG(state.name || 'No Name', info.title, info.desc);
+  const certThumb = document.getElementById('certThumb');
+  certThumb.style.backgroundImage = `url(${png})`;
+  certThumb.style.backgroundSize = 'cover';
+  document.getElementById('certPreviewArea').style.display = 'block';
+  const cert = { name: state.name || 'No Name', type: info.title, desc: info.desc, date: new Date().toISOString(), png };
+  state.lastCert = cert;
+  addToArchive(cert);
+  localStorage.setItem(STATE_KEY, JSON.stringify(state));
+  showBubble(`The trial concludes. You are: ${info.title}`, 'bot');
+}
+
+// certificate generation
+function generateCertificatePNG(name, typeTitle, typeDesc){
+  ctx.clearRect(0,0,certCanvas.width,certCanvas.height);
+  const g = ctx.createLinearGradient(0,0,certCanvas.width,certCanvas.height); g.addColorStop(0,'#120016'); g.addColorStop(1,'#3b0640');
+  ctx.fillStyle = g; ctx.fillRect(0,0,certCanvas.width,certCanvas.height);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 8; roundRect(ctx,40,40,certCanvas.width-80,certCanvas.height-80,30); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.96)'; ctx.font = '44px Cinzel, serif'; ctx.textAlign='center'; ctx.fillText('Certificate of Nocturnal Essence', certCanvas.width/2, 140);
+  ctx.fillStyle = 'rgba(100,149,237,0.96)'; ctx.font='36px Cinzel, serif'; ctx.fillText(typeTitle, certCanvas.width/2, 200);
+  ctx.font = '64px VT323, monospace'; ctx.fillStyle = '#fff'; ctx.fillText(name, certCanvas.width/2, 300);
+  ctx.font = '20px VT323, monospace'; ctx.fillStyle = 'rgba(255,255,255,0.9)'; wrapText(ctx, `This certifies that ${name} completed the Nocturnal Quest and its traits align with "${typeTitle}". ${typeDesc}`, certCanvas.width/2, 340, certCanvas.width-320, 28);
+  const now = new Date(); ctx.font = '18px VT323, monospace'; ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.fillText(`Issued: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`, certCanvas.width/2, 520);
+  const serial = 'NV-' + Math.random().toString(36).slice(2,10).toUpperCase(); ctx.fillText(`Serial: ${serial}`, certCanvas.width/2, 556);
+  ctx.strokeStyle = 'rgba(100,149,237,0.16)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(220,600); ctx.bezierCurveTo(460,560,940,640,1180,600); ctx.stroke();
+  return certCanvas.toDataURL('image/png');
+}
+function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function wrapText(ctx, text, x, y, maxWidth, lineHeight){ const words = text.split(' '); let line=''; for(let n=0;n<words.length;n++){ const test = line + words[n] + ' '; if(ctx.measureText(test).width > maxWidth && n>0){ ctx.fillText(line,x,y); line = words[n] + ' '; y += lineHeight; } else line = test; } ctx.fillText(line,x,y); return y; }
+
+// archive helpers
+function addToArchive(cert){ const arr = JSON.parse(localStorage.getItem(CERTS_KEY) || '[]'); arr.unshift(cert); if(arr.length>12) arr.pop(); localStorage.setItem(CERTS_KEY, JSON.stringify(arr)); renderSavedList(); }
+function renderSavedList(){ const arr = JSON.parse(localStorage.getItem(CERTS_KEY) || '[]'); if(!arr.length){ savedList.textContent = 'No certificates saved yet.'; return; } savedList.innerHTML=''; arr.forEach(c=>{ const row=document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.marginBottom='8px'; const left=document.createElement('div'); left.innerHTML=`<strong style="color:#fff">${escapeHtml(c.name)}</strong> — <span style="color:var(--muted)">${escapeHtml(c.type)}</span><div style="font-size:0.9rem;color:var(--muted)">${new Date(c.date).toLocaleString()}</div>`; const right=document.createElement('div'); const d=document.createElement('button'); d.className='btn'; d.textContent='Download PNG'; d.onclick=()=>downloadDataUrl(c.png, `certificate-${c.name.replace(/\s+/g,'_')}.png`); right.appendChild(d); row.appendChild(left); row.appendChild(right); savedList.appendChild(row); }); }
+function downloadDataUrl(dataUrl, filename){ const a=document.createElement('a'); a.href=dataUrl; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); }
+
+// convenience
+function dataURLtoBlob(dataurl){ var arr=dataurl.split(','), mime=arr[0].match(/:(.*?);/)[1], bstr=atob(arr[1]), n=bstr.length, u8=new Uint8Array(n); while(n--) u8[n]=bstr.charCodeAt(n); return new Blob([u8], {type:mime}); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,m=>'&#'+m.charCodeAt(0)+';'); }
+
+</script>
+</body>
+</html>
