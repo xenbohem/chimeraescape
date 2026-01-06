@@ -394,7 +394,7 @@ function dosBoot(){ const lines = ["INIT.Nocturne v2.0","Loading nocturnal modul
 })();
 
 function resetIntroUI(){ nameBox.style.display='none'; generatedArea.style.display='none'; restoreArea.style.display='none'; welcomeArea.style.display='none'; }
-
+);
 function openAppAfterLogin(sess){
   session = sess;
   state.name = sess.name || '';
@@ -412,6 +412,8 @@ function openAppAfterLogin(sess){
   chatLog.scrollTop = chatLog.scrollHeight;
   pulseAvatar();
 }
+  userNameField.addEventListener('input', () => {
+  document.querySelector('.name-callout')?.classList.remove('needs-name');}
   addConsolePrompt('Enter your name on the right and press Start to begin.');
   renderSavedList();
   dosArea.scrollTop = dosArea.scrollHeight;
@@ -579,6 +581,7 @@ function downloadDataUrl(dataUrl, filename){ const a=document.createElement('a')
 // convenience
 function dataURLtoBlob(dataurl){ var arr=dataurl.split(','), mime=arr[0].match(/:(.*?);/)[1], bstr=atob(arr[1]), n=bstr.length, u8=new Uint8Array(n); while(n--) u8[n]=bstr.charCodeAt(n); return new Blob([u8], {type:mime}); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,m=>'&#'+m.charCodeAt(0)+';'); }
+
 
 </script>
 </body>
