@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Chimera Quest Café — Valentine After Dark</title>
+
+<script src="https://unpkg.com/@supabase/supabase-js"></script>
+
+<style>
+:root{
+  --bg:#050009;
+  --neon:#7aa2ff;
+  --violet:#b86bff;
+  --pink:#ff4dd2;
+  --orange:#ff9f1a;
+}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at top,#120015,#000);
+  color:white;
+  font-family:"Courier New", monospace;
+  overflow:hidden;
+}
+
+#banner{
+  background:#000;
+  border-bottom:2px solid var(--neon);
+  text-align:center;
+  padding:12px;
+  letter-spacing:4px;
+  color:var(--violet);
+  transform:skew(-3deg);
+}
+
+#loginBox{
+  text-align:center;
+  padding:10px;
+}
+
+#countdown{
+  text-align:center;
+  color:var(--pink);
+}
+
+#advent{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  padding:15px;
+}
+
+.day{
+  height:80px;
+  background:black;
+  border:2px solid var(--neon);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:20px;
+  cursor:pointer;
+  box-shadow:0 0 15px var(--neon);
+}
+
+.day.open{
+  background:radial-gradient(circle,#ff8a00,#220);
+}
+
+#terminal{
+  background:black;
+  border-top:2px solid var(--neon);
+  height:160px;
+  padding:10px;
+  overflow-y:auto;
+}
+
+#quiz{display:none;text-align:center;}
+
+button{
+  background:black;
+  color:var(--pink);
+  border:1px solid var(--pink);
+  padding:8px;
+  margin:5px;
+  cursor:pointer;
+}
+
+#results{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  padding:10px;
+}
+
+.product{
+  height:120px;
+  border-radius:50%;
+  background:radial-gradient(circle,#ff9f1a,#000);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 0 25px orange;
+}
+</style>
+</head>
+
+<body>
+
+<div id="banner">VALENTINE AFTER DARK</div>
+
+<div id="loginBox">
+  <input id="email" placeholder="Enter your email">
+  <button onclick="login()">Enter After Dark</button>
+</div>
+
+<div id="countdown"></div>
+<div id="advent"></div>
+<div id="terminal"></div>
+
+<div id="quiz">
+  <p>Who are you buying for?</p>
+  <button onclick="pick('secret')">Secret Lover</button>
+  <button onclick="pick('partner')">Partner</button>
+  <button onclick="pick('self')">Myself</button>
+</div>
+
+<div id="results"></div>
+
+<script>
+const supabase = supabase.createClient(
+  "YOUR_SUPABASE_URL",
+  "YOUR_SUPABASE_ANON_KEY"
+);
+
+const lovers=["Velvet Thorn","Neon Vesper","Crimson Dove"];
+let userProfile=null;
+
+/* Countdown */
+const target=new Date(new Date().getFullYear(),1,14);
+setInterval(()=>{
+  const d=target-new Date();
+  document.getElementById("countdown").innerText=
+   Math.max(0,Math.floor(d/86400000))+" days until Valentine’s Day";
+},1000);
+
+/* Login */
+async function login(){
+  const email=document.getElementById("email").value;
+  await supabase.auth.signInWithOtp({ email });
+  alert("Check your email for the magic link 💌");
+}
+
+/* Auth state */
+supabase.auth.onAuthStateChange(async(e,s)=>{
+  if(!s) return;
+  const {data}=await supabase.from("profiles").select("*").eq("id",s.user.id).single();
+
+  if(!data){
+    const lover=lovers[Math.floor(Math.random()*lovers.length)];
+    await supabase.from("profiles").insert({
+      id:s.user.id,
+      secret_lover:lover,
+      opened_days:[]
+    });
+    userProfile={secret_lover:lover,opened_days:[]};
+    say("A secret lover has chosen you… "+lover);
+  } else {
+    userProfile=data;
+    say("Welcome back, beloved.");
+  }
+  restoreDays();
+});
+
+/* Advent */
+const advent=document.getElementById("advent");
+for(let i=1;i<=14;i++){
+  const d=document.createElement("div");
+  d.className="day";
+  d.innerText=i;
+  d.onclick=async()=>{
+    d.classList.add("open");
+    if(!userProfile.opened_days.includes(i)){
+      userProfile.opened_days.push(i);
+      await supabase.from("profiles")
+       .update({opened_days:userProfile.opened_days})
+       .eq("id",supabase.auth.user().id);
+    }
+    if(i===1) document.getElementById("quiz").style.display="block";
+  };
+  advent.appendChild(d);
+}
+
+function restoreDays(){
+  userProfile.opened_days.forEach(d=>{
+    document.querySelectorAll(".day")[d-1].classList.add("open");
+  });
+}
+
+/* Terminal */
+function say(t){
+  const term=document.getElementById("terminal");
+  term.innerHTML+="<div>"+t+"</div>";
+  term.scrollTop=term.scrollHeight;
+}
+
+/* Quiz */
+function pick(type){
+  const items={
+    secret:[
+      ["Black Rose Lamp","https://amazon.com/dp/B09Z123"],
+      ["Goth Jewelry","https://amazon.com/dp/B08X456"],
+      ["Love Letters","https://amazon.com/dp/B07Q789"]
+    ],
+    partner:[
+      ["Neon Sign","https://amazon.com/dp/B09N111"],
+      ["Chocolate","https://amazon.com/dp/B07C222"],
+      ["Couples Journal","https://amazon.com/dp/B08J333"]
+    ],
+    self:[
+      ["Perfume","https://amazon.com/dp/B07P444"],
+      ["Silk Robe","https://amazon.com/dp/B08R555"],
+      ["Poetry Book","https://amazon.com/dp/B09B666"]
+    ]
+  };
+
+  const r=document.getElementById("results");
+  r.innerHTML="";
+  items[type].forEach(p=>{
+    const d=document.createElement("div");
+    d.className="product";
+    d.innerText=p[0];
+    d.onclick=()=>{
+      window.open(p[1]+"?tag=YOUR_AMAZON_TAG","_blank");
+      loverTalk(p[0]);
+    };
+    r.appendChild(d);
+  });
+}
+
+/* Secret Lover AI */
+async function loverTalk(item){
+  const res=await fetch("https://api.openai.com/v1/chat/completions",{
+    method:"POST",
+    headers:{
+      "Authorization":"Bearer YOUR_OPENAI_KEY",
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      model:"gpt-4o-mini",
+      messages:[
+        {role:"system",content:"You are a secret lover named "+userProfile.secret_lover+" speaking in romantic gothic tone."},
+        {role:"user",content:"They chose "+item}
+      ]
+    })
+  });
+  const data=await res.json();
+  say(data.choices[0].message.content);
+}
+</script>
+</body>
+</html>
