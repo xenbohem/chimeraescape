@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The Umbral Covenant</title>
+<title>The Cafe</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
 <style>
@@ -88,7 +88,7 @@ footer{text-align:center;padding:60px;font-size:.8rem;color:var(--text-dim);}
 <!-- Name Entry Modal -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <h2>State Your Name</h2>
+    <h2>Choose A Name</h2>
     <input type="text" id="nameInput" placeholder="Enter your name...">
     <button onclick="enterSite()">Enter</button>
   </div>
@@ -99,7 +99,7 @@ footer{text-align:center;padding:60px;font-size:.8rem;color:var(--text-dim);}
 
 <header>
   <h1>The Umbral Covenant</h1>
-  <p>We do not fear the dark. We become it.</p>
+  <p>We do not fear the dark. We conquer it in Christ Jesus.</p>
 </header>
 
 <section class="avatar-section">
@@ -127,7 +127,6 @@ const greeting = document.getElementById("greetingText");
 const modal = document.getElementById("modal");
 const form = document.getElementById("covenForm");
 const skipBtn = document.getElementById("skipScroll");
-let scrollInProgress = false;
 
 /* Scroll reveal */
 window.addEventListener("scroll", () => {
@@ -136,27 +135,14 @@ window.addEventListener("scroll", () => {
   }
 });
 
-/* Smooth mystical scroll */
-function gentlyScrollTo(targetY, speed = 0.05, callback) {
-  function scrollStep() {
-    const currentY = window.scrollY;
-    const distance = targetY - currentY;
-    if (Math.abs(distance) < 0.5) {
-      if (callback) callback();
-      return;
-    }
-    window.scrollTo(0, currentY + distance * speed);
-    requestAnimationFrame(scrollStep);
-  }
-  requestAnimationFrame(scrollStep);
-}
-
-/* Modal entry with greeting pause + slow scroll */
+/* Modal entry with greeting pause + user scroll */
 function enterSite() {
   const name = document.getElementById("nameInput").value.trim() || "Wanderer";
   modal.style.display = "none";
   skipBtn.style.display = "block";
 
+  // Typewriter greeting
+  greeting.textContent = "";
   let text = "Greetings, " + name + ".";
   let i = 0;
   (function typeWriter() {
@@ -164,28 +150,21 @@ function enterSite() {
       greeting.textContent += text.charAt(i++);
       setTimeout(typeWriter, 60);
     } else {
-      // Scroll to avatar section first
-      const avatarY = avatar.offsetTop - 40;
-      scrollInProgress = true;
-      gentlyScrollTo(avatarY, 0.05, () => {
-        setTimeout(() => {
-          if (scrollInProgress) {
-            const formY = document.querySelector('.section').offsetTop - 40;
-            gentlyScrollTo(formY, 0.05);
-            scrollInProgress = false;
-          }
-        }, 2000); // 2-second pause at greeting
-      });
+      // Pause at greeting for effect
+      avatar.classList.add("visible");
+      setTimeout(() => {
+        // No forced scroll; user can manually scroll
+      }, 2000);
     }
   })();
 }
 
-/* Skip button functionality */
+/* Skip button resets to login */
 skipBtn.addEventListener("click", () => {
-  scrollInProgress = false;
   skipBtn.style.display = "none";
-  const formY = document.querySelector('.section').offsetTop - 40;
-  window.scrollTo(0, formY);
+  greeting.textContent = "";
+  modal.style.display = "flex";
+  window.scrollTo(0,0);
 });
 
 /* Form submission & ritual */
