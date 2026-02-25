@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chez Chat Cafe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=UnifrakturCook:wght@700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #050010;
+    font-family: 'Cinzel', serif;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* ACTIVATION SCREEN */
+#activation {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: radial-gradient(circle, #140020, #000);
+    z-index: 10;
+}
+
+.enter-crystal {
+    width: 80px;
+    height: 100px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 40px violet;
+    cursor: pointer;
+    animation: pulse 2s infinite alternate;
+    transition: transform 1s linear;
+}
+
+.enter-crystal:hover { transform: rotate(360deg); }
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+}
+
+/* LOADING SNOWGLOBE */
+#loading-screen {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle, rgba(138,43,226,0.4), rgba(75,0,130,0.9), #050010);
+    border-radius: 50%;
+    width: 80vmin; height: 80vmin;
+    z-index: 5;
+}
+
+/* TEAR RAIN */
+.particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.tear {
+    position: absolute;
+    width: 6px; height: 12px;
+    background: linear-gradient(to bottom, cornflowerblue, violet);
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-10vh); }
+    100% { transform: translateY(110vh); }
+}
+
+/* NAV */
+nav {
+    display: none;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(20,0,40,0.85);
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 15;
+}
+
+nav ul { list-style: none; display: flex; gap: 30px; }
+
+nav li {
+    cursor: pointer;
+    color: cornflowerblue;
+    transition: 0.3s;
+}
+nav li:hover { color: violet; }
+
+nav h1 {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 2.5rem;
+    background: linear-gradient(to bottom, cornflowerblue, #d3d3d3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+#datetime {
+    color: cornflowerblue;
+    font-family: Orbitron, monospace;
+    font-size: 0.9rem;
+}
+
+/* SECTIONS */
+.section {
+    display: none;
+    text-align: center;
+    padding: 40px 20px 80px 20px;
+    position: relative;
+}
+
+/* VIDEO */
+#home-video {
+    display: block;
+    margin: 0 auto;
+    width: 60%;
+    max-width: 600px;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(138,43,226,0.6);
+}
+
+/* TITLE OVERLAY */
+#video-title-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 3rem;
+    background: linear-gradient(to bottom, cornflowerblue, #d3d3d3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0;
+    pointer-events: none;
+    text-align: center;
+    z-index: 5;
+    transition: opacity 2.5s ease, transform 2.5s ease;
+}
+
+#video-title-overlay.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+/* CHATBOTS */
+.chatbot-box {
+    width:120px; height:140px;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border-radius:15px;
+    cursor:pointer;
+    box-shadow:0 0 20px rgba(255,255,255,0.3);
+    transition: transform 0.3s;
+}
+.chatbot-box:hover { transform: scale(1.05); }
+
+/* MUTE */
+.mute-crystal {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    width: 50px; height: 60px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 20px violet;
+    cursor: pointer;
+    display: none;
+}
+.mute-crystal.muted { opacity: 0.4; }
+
+</style>
+</head>
+<body>
+
+<div class="particles"></div>
+
+<div id="activation">
+    <div class="enter-crystal" onclick="activateSite()"></div>
+    <p>Click the crystal to enter</p>
+</div>
+
+<div id="loading-screen"></div>
+
+<audio id="bg-music" loop>
+    <source src="ambient.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="click-sound">
+    <source src="chime.mp3" type="audio/mpeg">
+</audio>
+
+<nav>
+    <h1>Chez Chat Cafe</h1>
+    <ul>
+        <li onclick="showSection('home')">Home</li>
+        <li onclick="showSection('poetry')">Poetry</li>
+        <li onclick="showSection('music')">Music</li>
+        <li onclick="showSection('lore')">Lore</li>
+    </ul>
+    <div id="datetime"></div>
+</nav>
+
+<div id="home" class="section">
+
+  <div style="position:relative;">
+    <video autoplay muted playsinline id="home-video">
+      <source src="star-angel-flying.mp4" type="video/mp4">
+    </video>
+
+    <div id="video-title-overlay">
+      Welcome to Chez Chat Cafe
+    </div>
+  </div>
+
+  <div style="margin-top:40px; padding-bottom:100px;">
+    <h2>Meet the Cafe Companions</h2>
+
+    <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-top:30px;">
+      <div class="chatbot-box" onclick="openChat('star')" style="background:#2e004b;">
+        <img src="placeholder.png" style="width:80px;height:80px;border-radius:15px;margin-bottom:10px;">
+        STAR
+      </div>
+      <div class="chatbot-box" onclick="openChat('milo')" style="background:#003300;">
+        <img src="placeholder.png" style="width:80px;height:80px;border-radius:15px;margin-bottom:10px;">
+        MILO
+      </div>
+      <div class="chatbot-box" onclick="openChat('hans')" style="background:#1a1a1a;">
+        <img src="placeholder.png" style="width:80px;height:80px;border-radius:15px;margin-bottom:10px;">
+        HANS
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="poetry" class="section"><h2>Romantic & Victorian Poetry</h2></div>
+<div id="music" class="section"><h2>80s Synthwave & New Wave</h2></div>
+<div id="lore" class="section"><h2>Gothic Lore & History</h2></div>
+
+<div class="mute-crystal" onclick="toggleMute()"></div>
+
+<script>
+let activated=false, isMuted=false;
+
+function startTearRain(){
+    const container=document.querySelector(".particles");
+    for(let i=0;i<40;i++){
+        let drop=document.createElement("div");
+        drop.className="tear";
+        drop.style.left=Math.random()*100+"vw";
+        drop.style.animationDuration=(8+Math.random()*6)+"s";
+        container.appendChild(drop);
+    }
+}
+
+function activateSite(){
+    if(activated) return;
+    activated=true;
+    document.getElementById("activation").style.display="none";
+    document.getElementById("loading-screen").style.display="flex";
+    document.getElementById("bg-music").play();
+    startTearRain();
+
+    setTimeout(()=>{
+        document.getElementById("loading-screen").style.display="none";
+        document.querySelector("nav").style.display="flex";
+        document.getElementById("home").style.display="block";
+        document.querySelector(".mute-crystal").style.display="block";
+        document.body.style.overflow="auto";
+    },9000);
+}
+
+function showSection(id){
+    document.querySelectorAll(".section").forEach(s=>s.style.display="none");
+    document.getElementById(id).style.display="block";
+}
+
+function toggleMute(){
+    const music=document.getElementById("bg-music");
+    isMuted=!isMuted;
+    music.muted=isMuted;
+    document.querySelector(".mute-crystal").classList.toggle("muted");
+}
+
+function updateDateTime(){
+    const now=new Date();
+    document.getElementById("datetime").innerText=now.toLocaleString();
+}
+setInterval(updateDateTime,1000);
+
+/* TITLE ANIMATION */
+const video=document.getElementById("home-video");
+const overlay=document.getElementById("video-title-overlay");
+
+video.addEventListener("ended",()=>{
+    overlay.classList.add("visible");
+});
+</script>
+
+</body>
+</html>
