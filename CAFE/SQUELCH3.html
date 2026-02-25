@@ -230,15 +230,22 @@ to{transform:translateY(110vh);}
 </div>
 
 <script>
-function startExperience(){
+  function startExperience(){
 document.getElementById("activation").style.display="none";
-document.getElementById("loading").style.display="flex";
+
+const loading=document.getElementById("loading");
+loading.style.display="flex";
 
 setTimeout(()=>{
-document.getElementById("loading").style.display="none";
+loading.classList.add("active");
+},50);
+
+setTimeout(()=>{
+loading.style.display="none";
 document.getElementById("hero").style.display="block";
 },9000);
 }
+
 
 const video=document.getElementById("home-video");
 video.addEventListener("ended",()=>{
