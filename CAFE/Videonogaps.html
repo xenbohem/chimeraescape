@@ -214,12 +214,13 @@ nav h1 {
 }
 
 /* ===== SECTIONS ===== */
-.section {
+    .section {
     display: none;
     text-align: center;
-    padding: 100px 20px;
+    padding: 40px 20px 80px 20px; /* reduced top space */
     position: relative;
     overflow: visible;
+
 }
 
 /* ===== MUTE CRYSTAL ===== */
@@ -306,10 +307,7 @@ nav h1 {
     <source src="star-angel-flying.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
-
-  <div style="position: relative; z-index: 1; display:flex; flex-direction:column; align-items:center; padding: 40px 0 100px 0;">
-    <h2>Welcome to Chez Chat Cafe</h2>
-
+<div style="position: relative; z-index: 1; display:flex; flex-direction:column; align-items:center; margin-top: 30px; padding-bottom: 100px;">
     <!-- Chatbots Container -->
     <div style="display:flex; gap: 20px; margin-top: 40px; flex-wrap:wrap; justify-content:center;">
       <div class="chatbot-box" onclick="openChat('star')" style="background:#2e004b; color:white;">
