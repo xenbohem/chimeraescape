@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chez Chat Cafe</title>
+
+<!-- Prevent ANY white flash -->
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #050010;
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=UnifrakturCook:wght@700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ================= GLOBAL ================= */
+
+body {
+    font-family: 'Cinzel', serif;
+    color: white;
+    overflow: hidden;
+}
+
+/* ================= LAYERS ================= */
+
+.light-rays {
+    position: fixed;
+    inset: -50%;
+    background: radial-gradient(circle,
+        rgba(138,43,226,0.18),
+        rgba(100,149,237,0.15),
+        rgba(75,0,130,0.18),
+        transparent 60%);
+    animation: rotateRays 120s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+@keyframes rotateRays {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.crystal {
+    position: absolute;
+    width: 10px;
+    height: 20px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    opacity: 0.6;
+    animation: drift linear infinite;
+}
+@keyframes drift {
+    from { transform: translateY(-100vh); }
+    to { transform: translateY(100vh); }
+}
+
+/* ================= LOADING SCREEN ================= */
+
+#loading-screen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(to top, #2e0066, #4b0082, #6495ed);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.castle-3d { display: flex; gap: 20px; }
+
+.tower {
+    width: 60px;
+    background: linear-gradient(145deg, violet, cornflowerblue, #4b0082);
+    clip-path: polygon(50% 0%, 100% 25%, 75% 100%, 25% 100%, 0% 25%);
+    box-shadow: 0 0 40px violet;
+    animation: float 2s infinite alternate ease-in-out;
+}
+.t1 { height: 180px; }
+.t2 { height: 220px; }
+.t3 { height: 160px; }
+
+@keyframes float {
+    from { transform: translateY(0); }
+    to { transform: translateY(-18px); }
+}
+
+.epic-core {
+    margin-top: 40px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid cornflowerblue;
+    box-shadow: 0 0 60px violet, inset 0 0 30px cornflowerblue;
+    animation: spin 6s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ================= NAV ================= */
+
+nav {
+    display: none;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(20,0,40,0.85);
+    position: relative;
+    z-index: 3;
+}
+
+.logo {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 28px;
+    color: violet;
+    text-shadow: 0 0 15px violet;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    cursor: pointer;
+    color: cornflowerblue;
+    transition: 0.3s;
+}
+nav li:hover {
+    color: violet;
+    text-shadow: 0 0 15px cornflowerblue;
+}
+
+/* ================= SECTIONS ================= */
+
+.section {
+    display: none;
+    text-align: center;
+    padding: 100px 20px;
+    position: relative;
+    z-index: 3;
+    animation: fadeIn 1.5s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.glow-text {
+    animation: glowReveal 3s forwards;
+}
+@keyframes glowReveal {
+    0% { opacity: 0; letter-spacing: 10px; }
+    100% {
+        opacity: 1;
+        letter-spacing: 2px;
+        text-shadow: 0 0 20px violet, 0 0 35px cornflowerblue;
+    }
+}
+
+/* ================= MUTE CRYSTAL ================= */
+
+.mute-crystal {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 60px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 20px violet;
+    cursor: pointer;
+    z-index: 5;
+    transition: 0.3s;
+}
+.mute-crystal:hover {
+    box-shadow: 0 0 40px cornflowerblue;
+}
+.mute-crystal.muted {
+    opacity: 0.4;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="light-rays"></div>
+<div class="particles"></div>
+
+<audio id="bg-music" loop preload="auto">
+    <source src="ambient.mp3" type="audio/mpeg">
+</audio>
+
+<div id="loading-screen">
+    <div class="castle-3d">
+        <div class="tower t1"></div>
+        <div class="tower t2"></div>
+        <div class="tower t3"></div>
+    </div>
+    <div class="epic-core"></div>
+</div>
+
+<nav>
+    <h1 class="logo glow-text">Chez Chat Cafe</h1>
+    <ul>
+        <li onclick="showSection('home')">Home</li>
+        <li onclick="showSection('poetry')">Poetry</li>
+        <li onclick="showSection('music')">Music</li>
+        <li onclick="showSection('lore')">Lore</li>
+    </ul>
+</nav>
+
+<div id="home" class="section">
+    <h2 class="glow-text">Welcome to the Velvet Realms</h2>
+</div>
+
+<div id="poetry" class="section">
+    <h2 class="glow-text">Poetry Realm</h2>
+</div>
+
+<div id="music" class="section">
+    <h2 class="glow-text">Music Realm</h2>
+</div>
+
+<div id="lore" class="section">
+    <h2 class="glow-text">Lore Realm</h2>
+</div>
+
+<div class="mute-crystal" onclick="toggleMute()"></div>
+
+<script>
+
+/* ===== Floating Crystals ===== */
+const particles = document.querySelector(".particles");
+for (let i = 0; i < 40; i++) {
+    let c = document.createElement("div");
+    c.className = "crystal";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.animationDuration = (6 + Math.random() * 8) + "s";
+    particles.appendChild(c);
+}
+
+/* ===== Audio Engine ===== */
+let audioCtx, convolver, clickBuffer, musicSource;
+let isMuted = false;
+
+async function initAudio() {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    const ir = await fetch("cathedral_ir.wav");
+    const irBuffer = await audioCtx.decodeAudioData(await ir.arrayBuffer());
+    convolver = audioCtx.createConvolver();
+    convolver.buffer = irBuffer;
+    convolver.connect(audioCtx.destination);
+
+    const click = await fetch("chime.mp3");
+    clickBuffer = await audioCtx.decodeAudioData(await click.arrayBuffer());
+
+    const music = document.getElementById("bg-music");
+    musicSource = audioCtx.createMediaElementSource(music);
+    musicSource.connect(convolver);
+    music.play();
+}
+
+function playClick() {
+    if (!audioCtx || isMuted) return;
+    const src = audioCtx.createBufferSource();
+    src.buffer = clickBuffer;
+
+    const panner = audioCtx.createStereoPanner();
+    panner.pan.value = Math.random() * 2 - 1;
+
+    src.connect(panner);
+    panner.connect(convolver);
+    src.start();
+}
+
+function toggleMute() {
+    isMuted = !isMuted;
+    document.querySelector(".mute-crystal").classList.toggle("muted");
+    document.getElementById("bg-music").muted = isMuted;
+}
+
+function showSection(id) {
+    document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+    document.getElementById(id).style.display = "block";
+    playClick();
+}
+
+/* ===== Start After First Interaction ===== */
+document.addEventListener("click", async function start() {
+    if (!audioCtx) await initAudio();
+    document.removeEventListener("click", start);
+});
+
+/* ===== 7 Second Intro ===== */
+setTimeout(() => {
+    document.getElementById("loading-screen").style.display = "none";
+    document.querySelector("nav").style.display = "flex";
+    document.getElementById("home").style.display = "block";
+    document.body.style.overflow = "auto";
+}, 7000);
+
+</script>
+
+</body>
+</html>
