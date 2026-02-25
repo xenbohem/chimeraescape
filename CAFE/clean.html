@@ -292,11 +292,18 @@ function playClick() {
     panner.connect(convolver);
     src.start();
 }
+    function toggleMute() {
 
-function toggleMute() {
+    // Play spatial click BEFORE toggling mute
+    if (!isMuted) playClick();
+
     isMuted = !isMuted;
-    document.querySelector(".mute-crystal").classList.toggle("muted");
+
+    document.querySelector(".mute-crystal")
+        .classList.toggle("muted");
+
     document.getElementById("bg-music").muted = isMuted;
+
 }
 
 function showSection(id) {
