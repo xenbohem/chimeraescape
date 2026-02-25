@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chez Chat Cafe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=UnifrakturCook:wght@700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #050010;
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+    color: white;
+}
+
+/* ===== ACTIVATION SCREEN ===== */
+#activation {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: radial-gradient(circle, #140020, #000);
+    z-index: 10;
+}
+
+.enter-crystal {
+    width: 80px;
+    height: 100px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 40px violet;
+    cursor: pointer;
+    animation: pulse 2s infinite alternate;
+    transition: transform 1s linear;
+}
+
+.enter-crystal:hover {
+    transform: rotate(360deg);
+}
+
+@keyframes pulse {
+    from { transform: scale(1); box-shadow: 0 0 20px violet; }
+    to { transform: scale(1.1); box-shadow: 0 0 60px cornflowerblue; }
+}
+
+/* ===== LOADING / PALACE ===== */
+#loading-screen {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background:
+        radial-gradient(circle at center,
+            rgba(138,43,226,0.4),
+            rgba(75,0,130,0.9),
+            #050010);
+    overflow: hidden;
+    z-index: 5;
+}
+
+.palace-glow {
+    position: absolute;
+    width: 400px;
+    height: 300px;
+    background: radial-gradient(circle,
+        rgba(100,149,237,0.5),
+        transparent 70%);
+    filter: blur(40px);
+    animation: glowPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+    from { transform: scale(1); opacity: 0.6; }
+    to { transform: scale(1.1); opacity: 1; }
+}
+
+.palace {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    z-index: 2;
+}
+
+/* Towers: 2 left, 2 right */
+.tower {
+    width: 70px;
+    background: linear-gradient(145deg, violet, cornflowerblue, #4b0082);
+    clip-path: polygon(50% 0%, 100% 25%, 75% 100%, 25% 100%, 0% 25%);
+    box-shadow: 0 0 30px violet;
+    animation: float 3s infinite alternate ease-in-out;
+}
+
+.t1 { height: 220px; } /* left */
+.t2 { height: 180px; } /* left */
+.t3 { height: 280px; } /* right */
+.t4 { height: 220px; } /* right */
+
+.central-arch {
+    width: 200px;
+    height: 180px;
+    background: linear-gradient(to bottom, cornflowerblue, violet);
+    border-radius: 100px 100px 0 0;
+    box-shadow: 0 0 50px cornflowerblue;
+}
+
+@keyframes float {
+    from { transform: translateY(0); }
+    to { transform: translateY(-20px); }
+}
+
+/* ===== TEAR / RAIN ===== */
+.particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.tear {
+    position: absolute;
+    width: 6px;
+    height: 12px;
+    background: linear-gradient(to bottom, cornflowerblue, violet);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* teardrop shape */
+    opacity: 0.5;
+    filter: drop-shadow(0 0 3px cornflowerblue);
+    animation: fall linear infinite;
+}
+
+.tear.twinkle {
+    animation:
+        fall linear infinite,
+        shimmer 3s ease-in-out infinite alternate;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-15vh) translateX(0) rotate(0deg); opacity:0.3; }
+    50% { transform: translateY(50vh) translateX(5px) rotate(10deg); }
+    100% { transform: translateY(110vh) translateX(-5px) rotate(20deg); opacity:0.6; }
+}
+
+@keyframes shimmer {
+    from { opacity: 0.3; filter: drop-shadow(0 0 2px violet); }
+    to { opacity: 0.7; filter: drop-shadow(0 0 6px cornflowerblue); }
+}
+
+/* ===== NAV ===== */
+nav {
+    display: none;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(20,0,40,0.85);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+nav li {
+    cursor: pointer;
+    color: cornflowerblue;
+    transition: 0.3s;
+}
+
+nav li:hover { color: violet; }
+
+#datetime {
+    color: cornflowerblue;
+    font-family: Orbitron, monospace;
+    font-size: 0.9rem;
+    align-self: center;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+    display: none;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+/* ===== MUTE CRYSTAL ===== */
+.mute-crystal {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 60px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 20px violet;
+    cursor: pointer;
+    display: none;
+}
+.mute-crystal.muted { opacity: 0.4; }
+</style>
+</head>
+<body>
+
+<!-- TEAR RAIN -->
+<div class="particles"></div>
+
+<!-- ACTIVATION SCREEN -->
+<div id="activation">
+    <div class="enter-crystal" onclick="activateSite()"></div>
+    <p>Click the crystal to enter</p>
+</div>
+
+<!-- LOADING / PALACE -->
+<div id="loading-screen">
+    <div class="palace-glow"></div>
+    <div class="palace">
+        <div class="tower t1"></div>
+        <div class="tower t2"></div>
+        <div class="central-arch"></div>
+        <div class="tower t3"></div>
+        <div class="tower t4"></div>
+    </div>
+</div>
+
+<!-- AUDIO -->
+<audio id="bg-music" loop>
+    <source src="ambient.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="click-sound">
+    <source src="chime.mp3" type="audio/mpeg">
+</audio>
+
+<!-- NAV -->
+<nav>
+    <h1>Chez Chat Cafe</h1>
+    <ul>
+        <li onclick="showSection('home')">Home</li>
+        <li onclick="showSection('poetry')">Poetry</li>
+        <li onclick="showSection('music')">Music</li>
+        <li onclick="showSection('lore')">Lore</li>
+    </ul>
+    <div id="datetime"></div>
+</nav>
+
+<!-- SECTIONS -->
+<div id="home" class="section"><h2>Welcome to Chez Chat Cafe</h2></div>
+<div id="poetry" class="section"><h2>Romantic & Victorian Poetry</h2></div>
+<div id="music" class="section"><h2>80s Synthwave & New Wave</h2></div>
+<div id="lore" class="section"><h2>Gothic Lore & History</h2></div>
+
+<!-- MUTE CRYSTAL -->
+<div class="mute-crystal" onclick="toggleMute()"></div>
+
+<script>
+let activated = false;
+let isMuted = false;
+
+/* ===== TEAR RAIN ===== */
+function startTearRain() {
+    const container = document.querySelector(".particles");
+    for (let i = 0; i < 60; i++) {
+        let drop = document.createElement("div");
+        drop.className = "tear";
+        if (Math.random() < 0.3) drop.classList.add("twinkle");
+        drop.style.left = Math.random() * 100 + "vw";
+        drop.style.animationDuration = (10 + Math.random() * 6) + "s"; // slower
+        drop.style.opacity = 0.3 + Math.random() * 0.4;
+        container.appendChild(drop);
+    }
+}
+
+/* ===== ACTIVATE SITE ===== */
+function activateSite() {
+    if (activated) return;
+    activated = true;
+
+    const music = document.getElementById("bg-music");
+    music.volume = 0.5;
+    music.play();
+
+    startTearRain();
+
+    document.getElementById("activation").style.display = "none";
+    document.getElementById("loading-screen").style.display = "flex";
+
+    setTimeout(() => {
+        document.getElementById("loading-screen").style.display = "none";
+        document.querySelector("nav").style.display = "flex";
+        document.getElementById("home").style.display = "block";
+        document.querySelector(".mute-crystal").style.display = "block";
+        document.body.style.overflow = "auto";
+    }, 4000);
+}
+
+/* ===== AUDIO CLICK ===== */
+function playClick() {
+    if (isMuted) return;
+    const click = document.getElementById("click-sound");
+    click.currentTime = 0;
+    click.play();
+}
+
+/* ===== NAVIGATION ===== */
+function showSection(id) {
+    document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+    document.getElementById(id).style.display = "block";
+    playClick();
+}
+
+/* ===== MUTE CRYSTAL ===== */
+function toggleMute() {
+    const music = document.getElementById("bg-music");
+    isMuted = !isMuted;
+    music.muted = isMuted;
+    document.querySelector(".mute-crystal").classList.toggle("muted");
+    playClick();
+}
+
+/* ===== DATE & TIME ===== */
+function updateDateTime() {
+    const now = new Date();
+    const options = { weekday:'short', year:'numeric', month:'short', day:'numeric' };
+    const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const dateStr = now.toLocaleDateString([], options);
+    document.getElementById("datetime").innerText = `${dateStr} ${timeStr}`;
+}
+setInterval(updateDateTime, 1000);
+updateDateTime();
+</script>
+</body>
+</html>
