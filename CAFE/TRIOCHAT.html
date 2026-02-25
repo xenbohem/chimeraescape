@@ -285,8 +285,9 @@ nav h1 {
     </ul>
     <div id="datetime"></div>
 </nav>
+
 <!-- ===== HOME SECTION WITH VIDEO & CHATBOTS ===== -->
-<div id="home" class="section" style="display:block;">
+<div id="home" class="section">
   <video autoplay muted playsinline id="home-video" style="
     position: absolute;
     top: 50%;
@@ -330,6 +331,10 @@ nav h1 {
   </div>
 </div>
 
+<div id="poetry" class="section"><h2>Romantic & Victorian Poetry</h2></div>
+<div id="music" class="section"><h2>80s Synthwave & New Wave</h2></div>
+<div id="lore" class="section"><h2>Gothic Lore & History</h2></div>
+
 <!-- Chat Modal -->
 <div id="chat-modal" style="
     position:fixed; inset:0; display:none; background:rgba(0,0,0,0.8); z-index:20;
@@ -342,87 +347,128 @@ nav h1 {
   </div>
 </div>
 
-<script>
-const chatData = {
-  star: {
-    color: 'purple',
-    messages: [
-      "Hello, I'm Star 🌟. How are you feeling today?",
-      "Coffee can help, but so can chatting a little!",
-      "Want to share how your day has been?"
-    ]
-  },
-  milo: {
-    color: 'green',
-    messages: [
-      "Hi, I'm Milo 🌿. I can teach you about herbs and teas.",
-      "You're my temporary apprentice! Let's start with chamomile.",
-      "Do you want to learn about brewing techniques?"
-    ]
-  },
-  hans: {
-    color: 'lightgray',
-    messages: [
-      "Greetings, I'm Hans 🧛. Tea etiquette is serious business.",
-      "Yes, I used to be a vampire, but now I serve fine teas.",
-      "Careful with the sugar; sophistication is key!"
-    ]
-  }
-};
+<div class="mute-crystal" onclick="toggleMute()"></div>
 
+<script>
+let activated = false;
+let isMuted = false;
+
+function startTearRain() {
+    const container = document.querySelector(".particles");
+    for (let i = 0; i < 60; i++) {
+        let drop = document.createElement("div");
+        drop.className = "tear";
+        if (Math.random() < 0.3) drop.classList.add("twinkle");
+        drop.style.left = Math.random() * 100 + "vw";
+        drop.style.animationDuration = (10 + Math.random() * 6) + "s";
+        drop.style.opacity = 0.3 + Math.random() * 0.4;
+        container.appendChild(drop);
+    }
+}
+
+function activateSite() {
+    if (activated) return;
+    activated = true;
+
+    const music = document.getElementById("bg-music");
+    music.volume = 0.5;
+    music.play();
+
+    startTearRain();
+
+    document.getElementById("activation").style.display = "none";
+    document.getElementById("loading-screen").style.display = "flex";
+
+    setTimeout(() => {
+        document.getElementById("loading-screen").style.display = "none";
+        document.querySelector("nav").style.display = "flex";
+        document.getElementById("home").style.display = "block";
+        document.querySelector(".mute-crystal").style.display = "block";
+        document.body.style.overflow = "auto";
+    }, 9000); // 9 seconds
+}
+
+function playClick() {
+    if (isMuted) return;
+    const click = document.getElementById("click-sound");
+    click.currentTime = 0;
+    click.play();
+}
+
+function showSection(id) {
+    document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+    document.getElementById(id).style.display = "block";
+    playClick();
+}
+
+function toggleMute() {
+    const music = document.getElementById("bg-music");
+    isMuted = !isMuted;
+    music.muted = isMuted;
+    document.querySelector(".mute-crystal").classList.toggle("muted");
+    playClick();
+}
+
+function updateDateTime() {
+    const now = new Date();
+    const options = { weekday:'short', year:'numeric', month:'short', day:'numeric' };
+    const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const dateStr = now.toLocaleDateString([], options);
+    document.getElementById("datetime").innerText = `${dateStr} ${timeStr}`;
+}
+setInterval(updateDateTime, 1000);
+updateDateTime();
+
+/* ===== CHATBOTS ===== */
+const chatData = {
+  star: { color: 'purple', messages: ["Hello, I'm Star 🌟. How are you feeling today?","Coffee can help, but so can chatting a little!","Want to share how your day has been?"] },
+  milo: { color: 'green', messages: ["Hi, I'm Milo 🌿. I can teach you about herbs and teas.","You're my temporary apprentice! Let's start with chamomile.","Do you want to learn about brewing techniques?"] },
+  hans: { color: 'lightgray', messages: ["Greetings, I'm Hans 🧛. Tea etiquette is serious business.","Yes, I used to be a vampire, but now I serve fine teas.","Careful with the sugar; sophistication is key!"] }
+};
 let currentChat = null;
 let msgIndex = 0;
 
-function openChat(name) {
-  currentChat = chatData[name];
-  msgIndex = 0;
-  document.getElementById('chat-modal').style.display = 'flex';
-  document.getElementById('chat-header').innerText = name.toUpperCase();
-  document.getElementById('chat-messages').innerHTML = '';
+function openChat(name){
+  currentChat = chatData[name]; msgIndex=0;
+  document.getElementById('chat-modal').style.display='flex';
+  document.getElementById('chat-header').innerText=name.toUpperCase();
+  document.getElementById('chat-messages').innerHTML='';
   showNextMessage();
 }
 
-function showNextMessage() {
+function showNextMessage(){
   if(!currentChat) return;
   if(msgIndex < currentChat.messages.length){
-    const chatBox = document.getElementById('chat-messages');
-    const msgDiv = document.createElement('div');
-    msgDiv.innerText = currentChat.messages[msgIndex];
-    msgDiv.style.color = currentChat.color;
-    msgDiv.style.margin = '5px 0';
+    const chatBox=document.getElementById('chat-messages');
+    const msgDiv=document.createElement('div');
+    msgDiv.innerText=currentChat.messages[msgIndex];
+    msgDiv.style.color=currentChat.color;
+    msgDiv.style.margin='5px 0';
     chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.scrollTop=chatBox.scrollHeight;
     msgIndex++;
   }
 }
 
 document.getElementById('chat-input').addEventListener('keydown', function(e){
-  if(e.key === 'Enter' && this.value.trim()!==''){
-    const chatBox = document.getElementById('chat-messages');
-    const userMsg = document.createElement('div');
-    userMsg.innerText = this.value;
-    userMsg.style.color = 'white';
-    userMsg.style.textAlign = 'right';
+  if(e.key==='Enter' && this.value.trim()!==''){
+    const chatBox=document.getElementById('chat-messages');
+    const userMsg=document.createElement('div');
+    userMsg.innerText=this.value;
+    userMsg.style.color='white'; userMsg.style.textAlign='right';
     chatBox.appendChild(userMsg);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.scrollTop=chatBox.scrollHeight;
     this.value='';
-    setTimeout(showNextMessage, 800); // bot replies
+    setTimeout(showNextMessage, 800);
   }
 });
 
 function closeChat(){
-  document.getElementById('chat-modal').style.display = 'none';
-  currentChat = null;
+  document.getElementById('chat-modal').style.display='none';
+  currentChat=null;
 }
 </script>
 
-<style>
-.chatbot-box{
-  width:120px; height:140px; padding:10px; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; border-radius:15px; cursor:pointer;
-  box-shadow:0 0 20px rgba(255,255,255,0.3); transition: transform 0.3s;
-}
-.chatbot-box:hover { transform: scale(1.05); }
-</style>
 </body>
 </html>
+
