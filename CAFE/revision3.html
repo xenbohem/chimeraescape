@@ -214,7 +214,7 @@ async function initAudio() {
     const musicSource = audioCtx.createMediaElementSource(music);
 
     try {
-        const ir = await fetch("cathedral_ir.wav");
+        const ir = await fetch("ambient.mp3");
         const irBuffer = await audioCtx.decodeAudioData(await ir.arrayBuffer());
 
         convolver = audioCtx.createConvolver();
@@ -225,7 +225,7 @@ async function initAudio() {
     } catch (e) {
         console.warn("Reverb failed, using dry audio.");
         musicSource.connect(audioCtx.destination);
-    }
+    am
 
     const click = await fetch("chime.mp3");
     clickBuffer = await audioCtx.decodeAudioData(await click.arrayBuffer);
