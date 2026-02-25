@@ -17,14 +17,14 @@ html, body {
 
 <style>
 
-/* ============ GLOBAL ============ */
+/* ===== GLOBAL ===== */
 body {
     font-family: 'Cinzel', serif;
     color: white;
     overflow: hidden;
 }
 
-/* ============ LIGHT RAYS ============ */
+/* ===== LIGHT RAYS ===== */
 .light-rays {
     position: fixed;
     inset: -50%;
@@ -35,19 +35,17 @@ body {
         transparent 60%);
     animation: rotateRays 120s linear infinite;
     pointer-events: none;
-    z-index: 0;
 }
 @keyframes rotateRays {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
-/* ============ PARTICLES ============ */
+/* ===== PARTICLES ===== */
 .particles {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 1;
 }
 .crystal {
     position: absolute;
@@ -63,7 +61,7 @@ body {
     to { transform: translateY(100vh); }
 }
 
-/* ============ LOADING ============ */
+/* ===== LOADING ===== */
 #loading-screen {
     position: fixed;
     inset: 0;
@@ -72,7 +70,6 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    z-index: 100;
 }
 
 .castle-3d { display: flex; gap: 20px; }
@@ -86,10 +83,12 @@ body {
 .t1 { height: 180px; }
 .t2 { height: 220px; }
 .t3 { height: 160px; }
+
 @keyframes float {
     from { transform: translateY(0); }
     to { transform: translateY(-18px); }
 }
+
 .epic-core {
     margin-top: 40px;
     width: 120px;
@@ -104,19 +103,12 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* ============ NAV ============ */
+/* ===== NAV ===== */
 nav {
     display: none;
     justify-content: space-between;
     padding: 20px 40px;
     background: rgba(20,0,40,0.85);
-    position: relative;
-    z-index: 3;
-}
-.logo {
-    font-family: 'UnifrakturCook', cursive;
-    font-size: 28px;
-    color: violet;
 }
 nav ul {
     list-style: none;
@@ -128,16 +120,14 @@ nav li {
     color: cornflowerblue;
 }
 
-/* ============ SECTIONS ============ */
+/* ===== SECTIONS ===== */
 .section {
     display: none;
     text-align: center;
     padding: 100px 20px;
-    position: relative;
-    z-index: 3;
 }
 
-/* ============ MUTE CRYSTAL ============ */
+/* ===== MUTE CRYSTAL ===== */
 .mute-crystal {
     position: fixed;
     bottom: 20px;
@@ -148,7 +138,6 @@ nav li {
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
     box-shadow: 0 0 20px violet;
     cursor: pointer;
-    z-index: 5;
 }
 .mute-crystal.muted { opacity: 0.4; }
 
@@ -160,8 +149,12 @@ nav li {
 <div class="light-rays"></div>
 <div class="particles"></div>
 
-<audio id="bg-music" loop preload="auto">
+<audio id="bg-music" loop>
     <source src="ambient.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="click-sound">
+    <source src="chime.mp3" type="audio/mpeg">
 </audio>
 
 <div id="loading-screen">
@@ -174,7 +167,7 @@ nav li {
 </div>
 
 <nav>
-    <h1 class="logo">Chez Chat Cafe</h1>
+    <h1>Chez Chat Cafe</h1>
     <ul>
         <li onclick="showSection('home')">Home</li>
         <li onclick="showSection('poetry')">Poetry</li>
@@ -192,7 +185,7 @@ nav li {
 
 <script>
 
-/* Floating crystals */
+/* Floating particles */
 const particles = document.querySelector(".particles");
 for (let i = 0; i < 40; i++) {
     let c = document.createElement("div");
@@ -202,53 +195,21 @@ for (let i = 0; i < 40; i++) {
     particles.appendChild(c);
 }
 
-/* Audio System */
-let audioCtx, convolver, clickBuffer;
 let isMuted = false;
 
-async function initAudio() {
-
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    const music = document.getElementById("bg-music");
-    const musicSource = audioCtx.createMediaElementSource(music);
-
-    try {
-        const ir = await fetch("ambient.mp3");
-        const irBuffer = await audioCtx.decodeAudioData(await ir.arrayBuffer());
-
-        convolver = audioCtx.createConvolver();
-        convolver.buffer = irBuffer;
-
-        musicSource.connect(convolver);
-        convolver.connect(audioCtx.destination);
-    } catch (e) {
-        console.warn("Reverb failed, using dry audio.");
-        musicSource.connect(audioCtx.destination);
-    am
-
-    const click = await fetch("chime.mp3");
-    clickBuffer = await audioCtx.decodeAudioData(await click.arrayBuffer);
-
-    music.play();
-}
-
 function playClick() {
-    if (!audioCtx || isMuted) return;
-
-    const src = audioCtx.createBufferSource();
-    src.buffer = clickBuffer;
-
-    src.connect(audioCtx.destination);
-    src.start();
+    if (isMuted) return;
+    const click = document.getElementById("click-sound");
+    click.currentTime = 0;
+    click.play();
 }
 
 function toggleMute() {
-    if (!audioCtx) return;
+    const music = document.getElementById("bg-music");
     playClick();
     isMuted = !isMuted;
+    music.muted = isMuted;
     document.querySelector(".mute-crystal").classList.toggle("muted");
-    document.getElementById("bg-music").muted = isMuted;
 }
 
 function showSection(id) {
@@ -257,9 +218,9 @@ function showSection(id) {
     playClick();
 }
 
-document.addEventListener("click", async function start() {
-    if (!audioCtx) await initAudio();
-    document.removeEventListener("click", start);
+document.addEventListener("click", function startMusic() {
+    document.getElementById("bg-music").play();
+    document.removeEventListener("click", startMusic);
 });
 
 setTimeout(() => {
