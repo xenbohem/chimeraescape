@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chez Chat Cafe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+html,body{
+margin:0;
+padding:0;
+background:#050010;
+color:white;
+font-family:'Cinzel',serif;
+overflow-x:hidden;
+}
+
+/* ================= CRYSTAL ENTRY ================= */
+
+#activation{
+position:fixed;
+inset:0;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+background:radial-gradient(circle,#140020,#000);
+z-index:100;
+}
+
+.enter-crystal{
+width:90px;
+height:110px;
+background:linear-gradient(violet,cornflowerblue);
+clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+box-shadow:0 0 40px violet;
+cursor:pointer;
+transition:1s;
+}
+
+.enter-crystal:hover{
+transform:rotate(360deg) scale(1.1);
+}
+
+/* ================= LOADING PALACE ================= */
+
+#loading{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+background:#050010;
+z-index:90;
+}
+
+.glow-circle{
+position:absolute;
+width:500px;
+height:500px;
+border-radius:50%;
+background:radial-gradient(circle,rgba(138,43,226,0.6),transparent 70%);
+filter:blur(20px);
+}
+
+.palace{
+position:relative;
+display:flex;
+align-items:flex-end;
+gap:20px;
+}
+
+.tower{
+width:60px;
+background:linear-gradient(145deg,violet,cornflowerblue,#4b0082);
+clip-path:polygon(50% 0%,100% 25%,75% 100%,25% 100%,0% 25%);
+box-shadow:0 0 20px violet;
+}
+
+.t1,.t4{height:200px;}
+.t2,.t3{height:240px;}
+
+.central{
+width:160px;
+height:160px;
+background:linear-gradient(to bottom,cornflowerblue,violet);
+border-radius:80px 80px 0 0;
+box-shadow:0 0 40px cornflowerblue;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+display:none;
+padding:80px 20px;
+text-align:center;
+}
+
+.window-frame{
+position:relative;
+width:420px;
+margin:0 auto;
+padding:20px;
+border-radius:220px 220px 20px 20px;
+border:3px solid rgba(138,43,226,0.6);
+box-shadow:0 0 60px rgba(138,43,226,0.4);
+background:rgba(255,255,255,0.03);
+}
+
+#home-video{
+width:100%;
+border-radius:200px 200px 15px 15px;
+display:block;
+}
+
+/* GREETING */
+
+#video-title-overlay{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-40%);
+font-family:'UnifrakturCook',cursive;
+font-size:2.5rem;
+color:black;
+text-shadow:
+0 0 10px rgba(138,43,226,0.8),
+0 0 20px rgba(138,43,226,0.6),
+0 0 40px rgba(75,0,130,0.7);
+opacity:0;
+transition:2.5s ease;
+}
+
+#video-title-overlay.visible{
+opacity:1;
+transform:translate(-50%,-50%);
+}
+
+/* CHATBOTS */
+
+.chatbots{
+display:flex;
+gap:25px;
+justify-content:center;
+flex-wrap:wrap;
+margin-top:60px;
+}
+
+.chatbot-box{
+width:150px;
+height:170px;
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+box-shadow:0 0 25px rgba(255,255,255,0.2);
+transition:0.3s;
+}
+
+.chatbot-box:hover{
+transform:scale(1.05);
+}
+
+/* TEARS */
+
+.particles{
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:0;
+}
+
+.tear{
+position:absolute;
+width:5px;
+height:10px;
+background:linear-gradient(to bottom,cornflowerblue,violet);
+border-radius:50%;
+opacity:0.4;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+from{transform:translateY(-10vh);}
+to{transform:translateY(110vh);}
+}
+</style>
+</head>
+<body>
+
+<div class="particles"></div>
+
+<!-- ENTRY -->
+<div id="activation">
+<div class="enter-crystal" onclick="startExperience()"></div>
+<p>Enter the Crystal Palace</p>
+</div>
+
+<!-- LOADING PALACE -->
+<div id="loading">
+<div class="glow-circle"></div>
+<div class="palace">
+<div class="tower t1"></div>
+<div class="tower t2"></div>
+<div class="central"></div>
+<div class="tower t3"></div>
+<div class="tower t4"></div>
+</div>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="hero">
+
+<div class="window-frame">
+<video autoplay muted playsinline id="home-video">
+<source src="star-angel-flying.mp4" type="video/mp4">
+</video>
+<div id="video-title-overlay">Welcome to Chez Chat Cafe</div>
+</div>
+
+<div class="chatbots">
+<div class="chatbot-box" style="background:#2e004b;" onclick="window.open('https://example.com/star','_blank')">STAR</div>
+<div class="chatbot-box" style="background:#003300;" onclick="window.open('https://example.com/milo','_blank')">MILO</div>
+<div class="chatbot-box" style="background:#1a1a1a;" onclick="window.open('https://example.com/hans','_blank')">HANS</div>
+</div>
+
+</div>
+
+<script>
+function startExperience(){
+document.getElementById("activation").style.display="none";
+document.getElementById("loading").style.display="flex";
+
+setTimeout(()=>{
+document.getElementById("loading").style.display="none";
+document.getElementById("hero").style.display="block";
+},9000);
+}
+
+const video=document.getElementById("home-video");
+video.addEventListener("ended",()=>{
+document.getElementById("video-title-overlay").classList.add("visible");
+});
+
+/* gentle tear rain */
+function startTears(){
+const container=document.querySelector(".particles");
+for(let i=0;i<40;i++){
+let drop=document.createElement("div");
+drop.className="tear";
+drop.style.left=Math.random()*100+"vw";
+drop.style.animationDuration=(8+Math.random()*6)+"s";
+container.appendChild(drop);
+}
+}
+startTears();
+</script>
+
+</body>
+</html>
