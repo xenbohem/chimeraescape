@@ -285,8 +285,43 @@ nav h1 {
 </div>
 
 <div class="mute-crystal" onclick="toggleMute()"></div>
+<div id="chat-chamber">
+  <div class="snowglobe-chamber">
 
-<script>
+    <h2 class="chat-title">Crystal Conversation Chamber</h2>
+
+    <div class="chatbots">
+
+      <div class="chatbot-box purple">
+        <div class="bot-name">STAR</div>
+        <div class="bot-hover">
+          Gentle guardian of coffee & constellations.<br>
+          She checks on your heart before your cup.
+        </div>
+      </div>
+
+      <div class="chatbot-box green">
+        <div class="bot-name">MILO</div>
+        <div class="bot-hover">
+          Keeper of herbs & forgotten remedies.<br>
+          You are always his apprentice.
+        </div>
+      </div>
+
+      <div class="chatbot-box dark">
+        <div class="bot-name">HANS</div>
+        <div class="bot-hover">
+          Former vampire. Tea purist.<br>
+          Dry wit. Perfect etiquette.
+        </div>
+      </div>
+
+    </div>
+
+    <button class="return-btn" onclick="closeChat()">Return to Realm</button>
+
+  </div>
+</div><script>
 let activated = false;
 let isMuted = false;
 
