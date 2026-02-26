@@ -533,6 +533,15 @@ function updateDateTime() {
 }
 setInterval(updateDateTime, 1000);
 updateDateTime();
+    function openChat(){
+document.getElementById("chat-chamber").classList.add("active");
+document.getElementById("hero").style.opacity="0.2";
+}
+
+function closeChat(){
+document.getElementById("chat-chamber").classList.remove("active");
+document.getElementById("hero").style.opacity="1";
+}
 </script>
 </body>
 </html>
