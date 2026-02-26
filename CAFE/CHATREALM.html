@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chez Chat Cafe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=UnifrakturCook:wght@700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #050010;
+    font-family: 'Cinzel', serif;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* ===== ACTIVATION SCREEN ===== */
+#activation {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: radial-gradient(circle, #140020, #000);
+    z-index: 10;
+}
+
+.enter-crystal {
+    width: 80px;
+    height: 100px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 40px violet;
+    cursor: pointer;
+    animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); box-shadow: 0 0 20px violet; }
+    to { transform: scale(1.1); box-shadow: 0 0 60px cornflowerblue; }
+}
+
+/* ===== LOADING GLOBE ===== */
+#loading-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center,
+        rgba(138,43,226,0.4),
+        rgba(75,0,130,0.9),
+        #050010);
+    overflow: hidden;
+    z-index: 5;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.3);
+    box-shadow: 0 0 80px rgba(138,43,226,0.5);
+    width: 80vmin;
+    height: 80vmin;
+}
+
+/* ===== TEAR RAIN ===== */
+.particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.tear {
+    position: absolute;
+    width: 6px;
+    height: 12px;
+    background: linear-gradient(to bottom, cornflowerblue, violet);
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-15vh); }
+    100% { transform: translateY(110vh); }
+}
+
+/* ===== NAV ===== */
+nav {
+    display: none;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(20,0,40,0.9);
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 15;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+nav li {
+    cursor: pointer;
+    color: cornflowerblue;
+    transition: 0.3s;
+}
+
+nav li:hover { color: violet; }
+
+nav h1 {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+#datetime {
+    color: cornflowerblue;
+    font-family: Orbitron, monospace;
+    font-size: 0.9rem;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+    display: none;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+/* ===== VIDEO ===== */
+#home-video {
+  width: 60%;
+  max-width: 600px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(138,43,226,0.6);
+}
+
+/* ===== CHAT SECTION ===== */
+#chat-layout{
+  display:flex;
+  height:70vh;
+  margin-top:40px;
+  gap:40px;
+  justify-content:center;
+}
+
+#bot-select{
+  width:250px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  align-items:center;
+}
+
+.chatbot-box{
+  width:160px;
+  padding:15px;
+  border-radius:15px;
+  cursor:pointer;
+  text-align:center;
+  box-shadow:0 0 20px rgba(255,255,255,0.3);
+  transition:0.3s;
+}
+
+.chatbot-box:hover { transform: scale(1.05); }
+
+.purple{ background:#2e004b; }
+.green{ background:#003300; }
+.dark{ background:#1a1a1a; }
+
+#chat-window{
+  flex:1;
+  max-width:700px;
+  background:#0a0a20;
+  border-radius:20px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 0 40px rgba(138,43,226,0.4);
+}
+
+#chat-header-full{
+  font-weight:bold;
+  margin-bottom:15px;
+  font-size:1.2rem;
+  color:cornflowerblue;
+}
+
+#chat-messages-full{
+  flex:1;
+  overflow-y:auto;
+  padding-right:10px;
+}
+
+#chat-input-area{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+#chat-input-full{
+  flex:1;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  background:#1a1a35;
+  color:white;
+}
+
+#chat-input-area button{
+  padding:10px 15px;
+  border:none;
+  border-radius:10px;
+  background:cornflowerblue;
+  cursor:pointer;
+}
+
+/* ===== MUTE CRYSTAL ===== */
+.mute-crystal {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 60px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 20px violet;
+    cursor: pointer;
+    display: none;
+}
+.muted { opacity:0.4; }
+</style>
+</head>
+<body>
+
+<div class="particles"></div>
+
+<div id="activation">
+    <div class="enter-crystal" onclick="activateSite()"></div>
+    <p>Click the crystal to enter</p>
+</div>
+
+<div id="loading-screen"></div>
+
+<audio id="bg-music" loop>
+    <source src="ambient.mp3" type="audio/mpeg">
+</audio>
+
+<nav>
+    <h1>Chez Chat Cafe</h1>
+    <ul>
+        <li onclick="showSection('home')">Home</li>
+        <li onclick="showSection('chat')">Chat</li>
+        <li onclick="showSection('poetry')">Poetry</li>
+        <li onclick="showSection('music')">Music</li>
+        <li onclick="showSection('lore')">Lore</li>
+    </ul>
+    <div id="datetime"></div>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="section">
+  <video autoplay muted playsinline id="home-video">
+    <source src="starflightcrop.mp4" type="video/mp4">
+  </video>
+  <h2>Welcome to Chez Chat Cafe</h2>
+</div>
+
+<!-- CHAT -->
+<div id="chat" class="section">
+  <div id="chat-layout">
+    <div id="bot-select">
+      <h2>Choose Your Companion</h2>
+      <div class="chatbot-box purple" onclick="startFullChat('star')">STAR</div>
+      <div class="chatbot-box green" onclick="startFullChat('milo')">MILO</div>
+      <div class="chatbot-box dark" onclick="startFullChat('hans')">HANS</div>
+    </div>
+
+    <div id="chat-window">
+      <div id="chat-header-full">Select a companion</div>
+      <div id="chat-messages-full"></div>
+      <div id="chat-input-area">
+        <input id="chat-input-full" placeholder="Speak your thoughts..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="poetry" class="section"><h2>Romantic & Victorian Poetry</h2></div>
+<div id="music" class="section"><h2>80s Synthwave & New Wave</h2></div>
+<div id="lore" class="section"><h2>Gothic Lore & History</h2></div>
+
+<div class="mute-crystal" onclick="toggleMute()"></div>
+
+<script>
+let activated=false,isMuted=false;
+
+function activateSite(){
+ if(activated) return;
+ activated=true;
+ document.getElementById("activation").style.display="none";
+ document.querySelector("nav").style.display="flex";
+ document.getElementById("home").style.display="block";
+ document.querySelector(".mute-crystal").style.display="block";
+ document.getElementById("bg-music").play();
+}
+
+function showSection(id){
+ document.querySelectorAll(".section").forEach(s=>s.style.display="none");
+ document.getElementById(id).style.display="block";
+}
+
+function toggleMute(){
+ const music=document.getElementById("bg-music");
+ isMuted=!isMuted;
+ music.muted=isMuted;
+ document.querySelector(".mute-crystal").classList.toggle("muted");
+}
+
+function updateDateTime(){
+ const now=new Date();
+ document.getElementById("datetime").innerText=
+ now.toLocaleString();
+}
+setInterval(updateDateTime,1000);
+
+/* CHAT SYSTEM */
+const chatData={
+ star:{color:'violet',messages:["Hello, I'm Star 🌟.","How are you feeling today?"]},
+ milo:{color:'#00aa55',messages:["Hi, I'm Milo 🌿.","Shall we brew something calming?"]},
+ hans:{color:'lightgray',messages:["Greetings, I'm Hans 🧛.","Refinement is everything."]}
+};
+
+let currentChat=null,msgIndex=0;
+
+function startFullChat(name){
+ currentChat=chatData[name];
+ msgIndex=0;
+ document.getElementById("chat-header-full").innerText=name.toUpperCase();
+ document.getElementById("chat-messages-full").innerHTML="";
+ showNextMessage();
+}
+
+function showNextMessage(){
+ if(!currentChat) return;
+ if(msgIndex<currentChat.messages.length){
+  const box=document.getElementById("chat-messages-full");
+  const div=document.createElement("div");
+  div.innerText=currentChat.messages[msgIndex];
+  div.style.color=currentChat.color;
+  div.style.margin="8px 0";
+  box.appendChild(div);
+  box.scrollTop=box.scrollHeight;
+  msgIndex++;
+ }
+}
+
+function sendMessage(){
+ const input=document.getElementById("chat-input-full");
+ if(!currentChat || input.value.trim()==="") return;
+ const box=document.getElementById("chat-messages-full");
+ const user=document.createElement("div");
+ user.innerText=input.value;
+ user.style.textAlign="right";
+ user.style.margin="8px 0";
+ box.appendChild(user);
+ box.scrollTop=box.scrollHeight;
+ input.value="";
+ setTimeout(showNextMessage,800);
+}
+
+document.getElementById("chat-input-full")
+.addEventListener("keydown",e=>{
+ if(e.key==="Enter") sendMessage();
+});
+</script>
+
+</body>
+</html>
