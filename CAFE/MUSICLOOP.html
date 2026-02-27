@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chez Chat Cafe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=UnifrakturCook:wght@700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #050010;
+    font-family: 'Cinzel', serif;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* ================= NAV ================= */
+nav {
+    display: none;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(20,0,40,0.9);
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 15;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+nav li {
+    cursor: pointer;
+    color: cornflowerblue;
+    transition: 0.3s;
+}
+
+nav li:hover { color: violet; }
+
+nav h1 {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 2.3rem;
+    margin: 0;
+}
+
+#datetime {
+    color: cornflowerblue;
+    font-family: Orbitron, monospace;
+    font-size: 0.8rem;
+}
+
+#now-playing {
+    font-family: Orbitron, monospace;
+    font-size: 0.85rem;
+    color: violet;
+}
+
+/* ================= ACTIVATION ================= */
+#activation {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: radial-gradient(circle, #140020, #000);
+    z-index: 50;
+}
+
+.enter-crystal {
+    width: 80px;
+    height: 100px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 40px violet;
+    cursor: pointer;
+    animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+}
+
+/* ================= SECTIONS ================= */
+.section { display:none; text-align:center; padding:50px 20px; }
+
+/* ================= HOME GLOBE ================= */
+#globe-video-frame {
+  position: relative;
+  margin: 0 auto;
+  width: 75vmin;
+  height: 75vmin;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(138,43,226,0.7),
+              inset 0 0 60px rgba(75,0,130,0.6);
+  border: 5px solid rgba(138,43,226,0.5);
+}
+
+#globe-video-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: brightness(0.85);
+}
+
+/* Sparkles inside globe */
+.sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: floatSparkle linear infinite;
+}
+
+@keyframes floatSparkle {
+    from { transform: translateY(100%) scale(0.5); opacity: 0; }
+    50% { opacity: 1; }
+    to { transform: translateY(-20%) scale(1.2); opacity: 0; }
+}
+
+/* ================= WELCOME ================= */
+.welcome-title-container {
+  margin-top: 40px;
+  display: inline-block;
+  padding: 20px 40px;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(100,149,237,0.5);
+  animation: floatText 4s ease-in-out infinite alternate;
+}
+
+.welcome-title {
+  font-size: 3rem;
+  margin: 0;
+  background: linear-gradient(to bottom, cornflowerblue, lightgray);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 25px rgba(100,149,237,0.6);
+}
+
+@keyframes floatText {
+  from { transform: translateY(0); }
+  to { transform: translateY(-15px); }
+}
+
+/* ================= MUSIC CONTROLS ================= */
+#music-controls {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    display: flex;
+    gap: 15px;
+    z-index: 100;
+}
+
+.music-crystal {
+    width: 55px;
+    height: 65px;
+    background: linear-gradient(violet, cornflowerblue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 20px violet;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.music-crystal:hover {
+    transform: scale(1.1);
+}
+
+.music-crystal.playing {
+    animation: crystalPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes crystalPulse {
+    from { box-shadow: 0 0 20px violet; }
+    to { box-shadow: 0 0 60px cornflowerblue, 0 0 100px violet; }
+}
+
+.muted { opacity: 0.4; }
+
+/* Sparkle burst */
+.burst-particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(circle, white, violet);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 200;
+    animation: burstAnim 800ms ease-out forwards;
+}
+
+@keyframes burstAnim {
+    from { transform: translate(0,0) scale(1); opacity: 1; }
+    to { transform: translate(var(--x), var(--y)) scale(0.3); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div id="activation">
+    <div class="enter-crystal" onclick="activateSite()"></div>
+    <p>Click the crystal to enter</p>
+</div>
+
+<nav>
+    <h1>Chez Chat Cafe</h1>
+    <ul>
+        <li onclick="showSection('home')">Home</li>
+        <li onclick="showSection('chat')">Chat</li>
+        <li onclick="showSection('poetry')">Poetry</li>
+        <li onclick="showSection('music')">Music</li>
+        <li onclick="showSection('lore')">Lore</li>
+    </ul>
+    <div>
+        <div id="now-playing">Now Playing: —</div>
+        <div id="datetime"></div>
+    </div>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="section">
+  <div id="globe-video-frame">
+    <video autoplay muted loop playsinline>
+      <source src="starflightcrop.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="welcome-title-container">
+    <h2 class="welcome-title">Welcome to Chez Chat Cafe</h2>
+  </div>
+</div>
+
+<div id="chat" class="section"><h2>Chat Area</h2></div>
+<div id="poetry" class="section"><h2>Poetry</h2></div>
+<div id="music" class="section"><h2>Music</h2></div>
+<div id="lore" class="section"><h2>Lore</h2></div>
+
+<!-- MUSIC CONTROLS -->
+<div id="music-controls">
+    <div class="music-crystal" onclick="prevTrack()">⏮</div>
+    <div class="music-crystal" id="mute-crystal" onclick="toggleMute()">🔮</div>
+    <div class="music-crystal" onclick="nextTrack()">⏭</div>
+</div>
+
+<audio id="bg-music"></audio>
+
+<script>
+let activated=false;
+
+/* PLAYLIST */
+const playlist = [
+  {name:"Midnight Espresso", file:"ambient.mp3"},
+  {name:"Velvet Starlight", file:"ambient2.mp3"},
+  {name:"Neon Reverie", file:"ambient3.mp3"}
+];
+
+let currentTrack = 0;
+const audio = document.getElementById("bg-music");
+
+function playTrack(index){
+    currentTrack = index;
+    audio.src = playlist[index].file;
+    audio.play();
+    document.getElementById("now-playing").innerText =
+        "Now Playing: " + playlist[index].name;
+}
+
+audio.addEventListener("ended", ()=>{
+    currentTrack = (currentTrack + 1) % playlist.length;
+    playTrack(currentTrack);
+    crystalBurst();
+});
+
+function nextTrack(){
+    currentTrack = (currentTrack + 1) % playlist.length;
+    playTrack(currentTrack);
+    crystalBurst();
+}
+
+function prevTrack(){
+    currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+    playTrack(currentTrack);
+    crystalBurst();
+}
+
+function toggleMute(){
+    audio.muted = !audio.muted;
+    document.getElementById("mute-crystal")
+        .classList.toggle("muted", audio.muted);
+}
+
+function crystalBurst(){
+    const crystal = document.getElementById("mute-crystal");
+    const rect = crystal.getBoundingClientRect();
+    const centerX = rect.left + rect.width/2;
+    const centerY = rect.top + rect.height/2;
+
+    for(let i=0;i<14;i++){
+        const p=document.createElement("div");
+        p.className="burst-particle";
+        const angle=Math.random()*2*Math.PI;
+        const distance=40+Math.random()*40;
+        p.style.left=centerX+"px";
+        p.style.top=centerY+"px";
+        p.style.setProperty("--x",Math.cos(angle)*distance+"px");
+        p.style.setProperty("--y",Math.sin(angle)*distance+"px");
+        document.body.appendChild(p);
+        setTimeout(()=>p.remove(),800);
+    }
+}
+
+function activateSite(){
+ if(activated) return;
+ activated=true;
+ document.getElementById("activation").style.display="none";
+ document.querySelector("nav").style.display="flex";
+ document.getElementById("home").style.display="block";
+ audio.volume=0.5;
+ playTrack(0);
+ createSparkles();
+}
+
+function createSparkles(){
+ const globe=document.getElementById("globe-video-frame");
+ for(let i=0;i<40;i++){
+   let s=document.createElement("div");
+   s.className="sparkle";
+   s.style.left=Math.random()*100+"%";
+   s.style.top=Math.random()*100+"%";
+   s.style.animationDuration=(6+Math.random()*6)+"s";
+   globe.appendChild(s);
+ }
+}
+
+function showSection(id){
+ document.querySelectorAll(".section").forEach(s=>s.style.display="none");
+ document.getElementById(id).style.display="block";
+}
+
+function updateDateTime(){
+ document.getElementById("datetime").innerText=new Date().toLocaleString();
+}
+setInterval(updateDateTime,1000);
+</script>
+
+</body>
+</html>
